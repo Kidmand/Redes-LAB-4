@@ -4,12 +4,13 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <packet_m.h>
+#include <stdio.h>
 
 using namespace omnetpp;
 
 class Net: public cSimpleModule {
 private:
-
+    cOutVector hopCountVector;
 public:
     Net();
     virtual ~Net();
@@ -30,6 +31,7 @@ Net::~Net() {
 }
 
 void Net::initialize() {
+    hopCountVector.setName("hopCount");
 }
 
 void Net::finish() {
@@ -42,6 +44,8 @@ void Net::handleMessage(cMessage *msg) {
 
     // If this node is the final destination, send to App
     if (pkt->getDestination() == this->getParentModule()->getIndex()) {
+        std::cout << "hola";
+        hopCountVector.record(pkt->getHopCount());
         send(msg, "toApp$o");
     }
     // If not, forward the packet to some else... to who?
