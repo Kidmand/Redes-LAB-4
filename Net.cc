@@ -4,7 +4,6 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <packet_m.h>
-#include <stdio.h>
 
 using namespace omnetpp;
 
@@ -44,7 +43,6 @@ void Net::handleMessage(cMessage *msg) {
 
     // If this node is the final destination, send to App
     if (pkt->getDestination() == this->getParentModule()->getIndex()) {
-        std::cout << "hola";
         hopCountVector.record(pkt->getHopCount());
         send(msg, "toApp$o");
     }
