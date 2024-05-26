@@ -10,6 +10,7 @@ using namespace omnetpp;
 class Net: public cSimpleModule {
 private:
     cOutVector hopCountVector;
+    cOutVector sourceVector;
 public:
     Net();
     virtual ~Net();
@@ -31,6 +32,7 @@ Net::~Net() {
 
 void Net::initialize() {
     hopCountVector.setName("hopCount");
+    sourceVector.setName("Source");
 }
 
 void Net::finish() {
@@ -43,6 +45,7 @@ void Net::handleMessage(cMessage *msg) {
 
     // If this node is the final destination, send to App
     if (pkt->getDestination() == this->getParentModule()->getIndex()) {
+        sourceVector.record(pkt->getSource());
         hopCountVector.record(pkt->getHopCount());
         send(msg, "toApp$o");
     }
