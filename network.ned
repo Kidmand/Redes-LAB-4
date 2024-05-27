@@ -2,7 +2,7 @@ simple App
 {
     parameters:
         volatile double interArrivalTime = default(0); // sec
-        int packetByteSize = default(125); // bytes
+        int packetByteSize = default(125);             // bytes
         int destination = default(0);
         @display("i=block/app");
     gates:

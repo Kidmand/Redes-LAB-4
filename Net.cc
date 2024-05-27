@@ -7,13 +7,16 @@
 
 using namespace omnetpp;
 
-class Net: public cSimpleModule {
+class Net : public cSimpleModule
+{
 private:
     cOutVector hopCountVector;
     cOutVector sourceVector;
+
 public:
     Net();
     virtual ~Net();
+
 protected:
     virtual void initialize();
     virtual void finish();
@@ -24,37 +27,44 @@ Define_Module(Net);
 
 #endif /* NET */
 
-Net::Net() {
+Net::Net()
+{
 }
 
-Net::~Net() {
+Net::~Net()
+{
 }
 
-void Net::initialize() {
+void Net::initialize()
+{
     hopCountVector.setName("hopCount");
     sourceVector.setName("Source");
 }
 
-void Net::finish() {
+void Net::finish()
+{
 }
 
-void Net::handleMessage(cMessage *msg) {
+void Net::handleMessage(cMessage *msg)
+{
 
     // All msg (events) on net are packets
-    Packet *pkt = (Packet *) msg;
+    Packet *pkt = (Packet *)msg;
 
     // If this node is the final destination, send to App
-    if (pkt->getDestination() == this->getParentModule()->getIndex()) {
+    if (pkt->getDestination() == this->getParentModule()->getIndex())
+    {
         sourceVector.record(pkt->getSource());
         hopCountVector.record(pkt->getHopCount());
         send(msg, "toApp$o");
     }
     // If not, forward the packet to some else... to who?
-    else {
+    else
+    {
         // We send to link interface #0, which is the
         // one connected to the clockwise side of the ring
         // Is this the best choice? are there others?
-        pkt->setHopCount(pkt->getHopCount()+1);
+        pkt->setHopCount(pkt->getHopCount() + 1);
         send(msg, "toLnk$o", 0);
     }
 }
