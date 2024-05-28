@@ -4,6 +4,12 @@
 
 <!-- Presentar muy brevemente los objetivos del proyecto y el proyecto en si, ... presentar brevemente -->
 
+### Objetivos del proyecto
+
+● Leer, comprender y generar modelos de red en Omnet++.
+● Analizar tráfico de red bajo diferentes estrategias de enrutamiento.
+● Diseñar y proponer soluciones de enrutamiento bajo diferentes topologías.
+
 ## Resumen
 
 <!-- Presentar brevemente la estructura del informe. Dar algunos detalles mas del proyecto.
