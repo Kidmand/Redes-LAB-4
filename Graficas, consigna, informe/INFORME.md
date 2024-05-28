@@ -12,13 +12,11 @@ Introducir que vamos a dividir el informe en dos partes y que luego las comparar
 
 ## Introduccion
 <!--
-Describir el estado del arte. (trabajos previos) + Ej: "En la actualidad se han propuesto varios protocolos para controlar la congestion y flujo en redes, como TCP, ..."
+Describir el estado del arte. (trabajos previos) ..."
 -->
 
 <!--
 - Metodología de trabajo.
-    + Ej: "Nosotros vamos a trabajar con simulación discreta, que es ...
-           y emplearemos un protocolo que vamos a proponer, para analizar el flujo y congestion en redes ..."
 -->
 
 ### Generalidades
@@ -38,8 +36,7 @@ enlace implementan generadores de tráfico y buffers respectivamente.
 ### Problematicas
 <!--
 - Definir el problema y contextualizar al lector con definiciones básicas.
-    + Ej: "Nosotros en las redes vamos a encontrar tal y tal problema ...
-           , el flujo esta tal cosa, la congestion tal otra ..."
+  + "Nosotros en las redes vamos a encontrar tal y tal problema ..."
 -->
 
 ### Casos de estudio
@@ -98,7 +95,7 @@ Una sección que describir nuestra propuesta de solución:
 - Todas las referencias que usamos en el trabajo. LIBROS, PAPERS, WEB, ETC.
 (Nosotros usamos el manual de Omnet++ y quizás algo más ...).
 
-Si agregamos imágenes de Tanembaun para explicar algo de flujo y congestion, también se debe referenciar.
+Si agregamos imágenes de Tanembaun para explicar algo, también se debe referenciar.
 -->
 
 - Andrew S. Tanenbaum, David J. Wetherall, Redes de Computadoras (5ta edición 2011), Pearson.
