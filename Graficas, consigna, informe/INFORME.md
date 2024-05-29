@@ -17,6 +17,9 @@ Para ello tomaremos estadisticas y probaremos diferentes casos con ambos algorit
 <!-- Presentar brevemente la estructura del informe. Dar algunos detalles mas del proyecto.
 Introducir que vamos a dividir el informe en dos partes y que luego las compararemos. 
 -->
+
+---
+
 ## Introduccion
 <!--
 Describir el estado del arte. (trabajos previos) ..."
@@ -50,6 +53,8 @@ una capa de red (net) y una capa de aplicación (app). La capa de aplicación y 
 1. Nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos nodos.
 2. Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos.
 
+---
+
 ## Parte 1
 
 ### Metodos
@@ -78,7 +83,7 @@ Nuestro algoritmo siempre enruta los paquetes por la salida en direccion de las 
 Por lo tanto seguiran estos caminos:
 > Node 2 (gen) --> Node 1 --> Node 0 (gen) --> Node 7 --> Node 6 --> Node 5 (sink)
 
-![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=500 height=auto}
+![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=600 height=auto}
 
 >**Tipos de nodos** 
 *No utilizados:* No reciben paquetes de su app ni de ningun vecino.
@@ -105,7 +110,7 @@ Luego, podemos notar en la siguiente grafica que al destino (app nodo 5) llegan 
  No hay otra razon y a lo largo del tiempo deberian llagar una cantidad similar de paquetes al nodo 5 de ambos origenes.
  Esto lo podemos ver en la siguiente grafica donde ademas del delay, podemos ver el orden de llegada por fuente.
 
-![Delay de los paquetes entregados al node 5 P1C1](./IMGs/DelayXFuente_Node5_P1C1.png){width=500 height=auto}
+![Delay de los paquetes entregados al node 5 P1C1](./IMGs/DelayXFuente_Node5_P1C1.png){width=850 height=auto}
 
 En este grafico podemos notar dos cosas:
 
@@ -114,7 +119,7 @@ En este grafico podemos notar dos cosas:
 
 Luego, otro grafico interedante de ver es el siguiente:
 
-![Numero de saltos de paquetes entregados al node 5 P1C1](./IMGs/SaltosXFuente_Node5_P1C1.png){width=500 height=auto}
+![Numero de saltos de paquetes entregados al node 5 P1C1](./IMGs/SaltosXFuente_Node5_P1C1.png){width=850 height=auto}
 
 En este grafico podemos notar mejor la diferencia entre la distancia que recorrieron los paquetes de cada origen. Como hemos dicho anteriormente, el nodo 0 esta mas cerca y de ahi la menor distancia.
 
@@ -122,13 +127,15 @@ En este grafico podemos notar mejor la diferencia entre la distancia que recorri
 
 <!-- 2. Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos. -->
 
-![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=500 height=auto}
+![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=600 height=auto}
 
-![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=500 height=auto}
+![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=600 height=auto}
 
-![Delay de los paquetes entregados al node 5 P1C2](./IMGs/DelayXFuente_Node5_P1C2.png){width=500 height=auto}
+![Delay de los paquetes entregados al node 5 P1C2](./IMGs/DelayXFuente_Node5_P1C2.png){width=850 height=auto}
 
-![Numero de saltos de paquetes entregados al node 5 P1C2](./IMGs/SaltosXFuente_Node5_P1C2.png){width=500 height=auto}
+![Numero de saltos de paquetes entregados al node 5 P1C2](./IMGs/SaltosXFuente_Node5_P1C2.png){width=850 height=auto}
+
+---
 
 ## Parte 2
 
@@ -156,13 +163,20 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 
 #### Caso 2
 
-## Comparacion de resultados
+---
+
+## Conclusiones
+
+### Comparacion de resultados
 <!-- Comparar graficos de ambas partes. solo poner los graficos si hay algo que comparar o recordar. 
 Evalúe y compare su estrategia con los casos 1 y 2 de la tarea de análisis . ¿Cuánto4
 mejoran las métricas? ¿Por qué?
 -->
-## Discusiones
+### Discusiones
 <!-- cualquier cosa que no entre en la comparacion de resultados va aca, ej: posibles mejoras, obs,conclusiones, ... -->
+
+---
+
 ## Referencias
 <!--
 - Todas las referencias que usamos en el trabajo. LIBROS, PAPERS, WEB, ETC.
