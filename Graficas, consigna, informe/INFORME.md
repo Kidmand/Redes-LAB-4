@@ -160,7 +160,20 @@ En este grafico podemos notar mejor la diferencia entre la distancia que recorri
 
 #### Caso 2
 
-<!-- 2. Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos. -->
+> *Recordemos:* En este caso, los nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos.
+
+Nuestro algoritmo siempre enruta los paquetes por la salida en direccion de las manecillas del reloj.
+Por lo tanto el flujo de paquetes seguira estos caminos:
+> Node[4] (gen) --> Node[3] (gen) --> Node[2] (gen) --> Node[1] (gen) --> Node[0] (gen) --> Node[7] (gen) --> Node[6] (gen) --> Node[5] (sink)
+
+Sabiendo esto podemos categorizar a los nodos de la siguente forma:
+
+- *Nodos Generadores:* {0,1,2,3,4,6,7}
+- *Nodos Consumidores:* {5}
+- *Nodos Conectores:* {0,1,2,3,6,7}
+- *Nodos No utilizados:* {}
+
+*Como afecta al buffer de cada nodo esta distribucion?*
 
 ![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=850 height=auto}
 
