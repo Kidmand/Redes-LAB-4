@@ -8,12 +8,22 @@
 ● Analizar tráfico de red bajo diferentes estrategias de enrutamiento.
 ● Diseñar y proponer soluciones de enrutamiento bajo diferentes topologías.
 
-### Resumen
+### Resumen del trabajo
 
 En este trabajo analizaremos el rol de la capa de red, que deberá decidir por qué interface enviar los paquetes que le llegan ya sea desde la capa de aplicación superior o desde las capas de enlaces inferiores.
-No enfrentaremos a el problema de enrutar el tráfico que confluye desde los módulos por múltiples entradas y salidas, utilizando un algoritmo simple (dado por la catedra) y otro mas complejo con el fin de comparar sus diferentes efectos.
+Nos enfrentaremos a el problema de enrutar el tráfico que confluye desde los módulos por múltiples entradas y salidas, utilizando un algoritmo simple (dado por la catedra) y otro mas complejo con el fin de comparar sus diferentes efectos.
 Para ello tomaremos estadisticas y probaremos diferentes casos con ambos algoritmos de enrutamiento para ver su influencia utilizando la herramienta de simulación de eventos discretos Omnet++, bajo el lenguaje c++.
-<!-- ## Estructura  OPTIONAL: Explicar como se estructurara el informe brevemente
+
+## Estructura del informe
+
+Hemos tomado los siguientes datos para estudiar el efecto de los diferentes algoritmos de enrutamiento en los casos propuestos:
+
+- Utilización de los buffers de la red (Buffer Size)
+- Entrega de paquetes a la app del node 5 por origen (Delay y Source)
+- Paquetes llegados a node 5 app por origen (Source)
+- Cantidad de saltos utilizados por cada paquete por origen (hopCount y Source)
+
+<!-- Explicar como se estructurara el informe brevemente -->
 <!-- Presentar brevemente la estructura del informe. Dar algunos detalles mas del proyecto.
 Introducir que vamos a dividir el informe en dos partes y que luego las compararemos. 
 -->
@@ -27,31 +37,41 @@ Describir el estado del arte. (trabajos previos) ..."
 <!--
 - Metodología de trabajo.
 -->
-### Generalidades
+### Generalidades y definiciones
 
 <!-- Agregar definiciones generales, teoria para ya dar por sentada en ambas partes. -->
+
 #### Topologia de red y Estructura interna de los nodos
 
 La red consta de 8 nodos conectados en forma de anillo, cada uno con dos interfaces de comunicación full-duplex con dos posibles vecinos.
 
-Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada vecino),
-una capa de red (net) y una capa de aplicación (app). La capa de aplicación y la capa de enlace implementan generadores de tráfico y buffers respectivamente.
+Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada vecino), una capa de red (net) y una capa de aplicación (app). La capa de aplicación y la capa de enlace implementan generadores de tráfico y buffers respectivamente.
 
 ![Topologia Red Anillo](./IMGs/Topologia_Red_Anillo.png){width=500 height=auto}
 
-### Problematicas
+<!-- TODO: Explicar interArrivalTime y packetByteSize -->
+
+#### Problematicas
 <!--
 - Definir el problema y contextualizar al lector con definiciones básicas.
   + "Nosotros en las redes vamos a encontrar tal y tal problema ..."
 -->
-### Casos de estudio
+#### Casos de estudio
+
+- *Caso 1:* Nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos nodos.
+- *Caso 2:* Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos.
 <!--
 - Presentación de nuestros casos de estudio.
    + Explicar caso 1: su ventaja, problemas, que esperamos ver, etc.
    + Explicar caso 2: su ventaja, problemas, que esperamos ver, etc.
 -->
-1. Nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos nodos.
-2. Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos.
+
+#### Tipos de nodos en un flujo de datos
+
+- *No utilizados:* No reciben paquetes de su app ni de ningun vecino.
+- *Generador:* Recibe paquetes de su app y los transmite.
+- *Conector:* Recibe y retransmite paquetes de algun vecino.
+- *Consumidor:* Recibe y consume (manda a su app) paquetes de algun vecino.
 
 ---
 
@@ -77,45 +97,60 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 -->
 #### Caso 1
 
-En este caso, los nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos.
+> *Recordemos:* En este caso, los nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos.
 
 Nuestro algoritmo siempre enruta los paquetes por la salida en direccion de las manecillas del reloj.
-Por lo tanto seguiran estos caminos:
-> Node 2 (gen) --> Node 1 --> Node 0 (gen) --> Node 7 --> Node 6 --> Node 5 (sink)
+Por lo tanto el flujo de paquetes seguira estos caminos:
+> Node[2] (gen) --> Node[1] --> Node[0] (gen) --> Node[7] --> Node[6] --> Node[5] (sink)
+
+Sabiendo esto podemos categorizar a los nodos de la siguente forma:
+
+- *Nodos Generadores:* {2,0}
+- *Nodos Consumidores:* {5}
+- *Nodos Conectores:* {1,0,7,6}
+- *Nodos No utilizados:* {3,4}
+
+*Como afecta al buffer de cada nodo esta distribucion?*
 
 ![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=850 height=auto}
 
->**Tipos de nodos** 
-*No utilizados:* No reciben paquetes de su app ni de ningun vecino.
-*Generador:* Recibe paquetes de su app y los transmite.
-*Conector:* Recibe y retransmite paquetes de algun vecino.
-*Destino:* Recibe y consume (manda a su app) paquetes de algun vecino.
+Podemos notar lo siguiente:
 
-Como vemos en la imagen, podemos dividir los efectos en los buffers por cada tipo de nodo:
+- Los nodos *No utilizados* {3,4} y el *Consumidor* {5} no utilizan su buffer.
+Esto se puede explicar debido a que ninguno transmite ni re-transmite paquetes.
+Es trivial en el cso de los nodos {3,4} ya que tampoco les llegan de ninguna forma, pero al nodo[5] si le llegan.
+Lo que sucede alli es que la transmision a la app es directa por lo que no hay retardo que requiera la utilizacion del buffer del node[5].
 
-Los nodos que no transmiten ni re-transmiten paquetes no utilizan su buffer. Esto lo podemos ver en los nodos *No utilizados* 3 y 4 y en el *Destino* 5.
+- Los nodos *Conectores* no *Generadores* {1,7,6} almacenan en su buffer entre 1 y 0 paquetes.
+Esto se explica debido a que hay un tiempo de transmision de los paquetes, por lo que se requiere guardarlos en un buffer. Pero la velocidad de transmision de los paquetes no es menor a la velocidad con la que llegan, por lo tanto no crece la utilizacion de sus bufferes con el tiempo manteniendose en un rango constante entre 1 y 0.
 
-Los nodos *Conectores* no *Generadores* 1, 7 y 6 almacenan en su buffer entre 1 y 0 paquetes.
+- El nodo *Generador* no *Conector* node[2] tiene una mayor y variante utilizacion de su buffer.
+Que utilice mas su buffer es debido a que recibe paquetes a una velocidad mayor de la que los puede transmitir.
+La variabilidad de la utilizacion de su buffer se explica a su vez porque los paquetes los recibe desde su app, la cual no le envia paquetes de forma constante.
 
-Los nodos *Generadores* tienen una mayor utilizacion del buffer con una intrinceca variacion debida a los envios no constantes de su app.
+- Por ultimo, el nodo *Generador* y *Conector* node[0] es el que mas utilizacion tiene de su buffer.
+Esto es causado por dos factores. El primero es que recibe paquetes de forma contante al igual que los demas nodos *Conectores* por lo que no tiene "descanzo" digamos. Luego, tambien recibe paquetes de su app al ser tambien un nodo *Generador* lo que causa que a momentos se le envie una mayor cantidad de paquetes.
+Ambos factores causan que la velocidad con la que le llegan paquetes sea contantemente mayor a la velocidad con la que los puede enviar. Por esta razon podemos ver una utilizacion contantemente al alza de su buffer; con ciertas micro variaciones que vendrian a ser, como en el caso del node[2], gracias al envio variable de su app.
 
-El nodo *Generador* que a su vez es *Conector*, al recibir paquetes de su app y de otro nodo mas; de su app recibira los paquetes variablemente, y del nodo que contantemente estara enviando, recibira los paquetes en tiempo contante. Debido a la mayor carga contante que recibe el nodo podemos ver como cumo su buffer tiene una clara tendencia al alza.
+El principal objetivo de toda red es que los paquetes lleguen desde su origen a su destino, por lo tanto, veamos mas profundamente la llegada de paquetes de los *Generadores* {2,0} al *Consumidor* node[5].
 
-Luego, podemos notar en la siguiente grafica que al destino (app nodo 5) llegan paquetes de ambos nodos pero con una diferencia, llagan mas del nodo 0.
+*Cuatos paquetes de cada generador llegan al detino node[5]?*
 
 ![Cantidad de paquetes llegados de cada fuente P1C1](./IMGs/CantidadXFuente_Node5_P1C1.png){width=500 height=auto}
 
- Esto se debe al hecho de estar el nodo 0 mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del nodo 0 al inicio del programa, de ahi la diferencia.
+Podemos notar que llegan paquetes de ambos nodos *Generadores* pero con una diferencia, llegan mas del nodo 0.
 
- No hay otra razon y a lo largo del tiempo deberian llagar una cantidad similar de paquetes al nodo 5 de ambos origenes.
- Esto lo podemos ver en la siguiente grafica donde ademas del delay, podemos ver el orden de llegada por fuente.
+Esto se debe al hecho de estar el nodo 0 mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del nodo 0 al inicio del programa, de ahi la diferencia.
+
+No hay otra razon y a lo largo del tiempo deberian llagar una cantidad similar de paquetes al nodo 5 de ambos origenes.
+Esto lo podemos ver en la siguiente grafica donde ademas del delay, podemos ver el orden de llegada por fuente.
 
 ![Delay de los paquetes entregados al node 5 P1C1](./IMGs/DelayXFuente_Node5_P1C1.png){width=850 height=auto}
 
 En este grafico podemos notar dos cosas:
 
 - *Al inicio llegan mas paquetes del node 0*: Esto coicide con lo dicho antes del grafico.
-- *El delay va aumentando*: Esto esta directamente relacionado por el aumento lineal del buffer 0 ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
+- *El delay va aumentando*: Esto esta directamente relacionado por el aumento lineal del buffer del node[0] ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
 
 Luego, otro grafico interedante de ver es el siguiente:
 
