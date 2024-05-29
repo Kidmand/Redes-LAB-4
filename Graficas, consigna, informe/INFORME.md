@@ -101,6 +101,7 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 
 Nuestro algoritmo siempre enruta los paquetes por la salida en direccion de las manecillas del reloj.
 Por lo tanto el flujo de paquetes seguira estos caminos:
+> **Flujo de transmision de paquetes**
 > Node[2] (gen) --> Node[1] --> Node[0] (gen) --> Node[7] --> Node[6] --> Node[5] (sink)
 
 Sabiendo esto podemos categorizar a los nodos de la siguente forma:
@@ -151,12 +152,15 @@ En este grafico podemos notar dos cosas:
 
 - *Al inicio llegan mas paquetes del node 0*: Esto coicide con lo dicho antes del grafico.
 - *El delay va aumentando*: Esto esta directamente relacionado por el aumento lineal del buffer del node[0] ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
+- *El delay del node[2] es generalmente mayor al del node[0]*: Esto se debe a que los paquetes enviados desde el node[2] vienen de mas lejos que los del node[0], por lo que tardan mas tiempo.
 
-Luego, otro grafico interedante de ver es el siguiente:
+*En el siguiente grafico podemos ver una representacion visual de las distancias recorridas por los paquetes desde su origen a su destino.*
 
 ![Numero de saltos de paquetes entregados al node 5 P1C1](./IMGs/SaltosXFuente_Node5_P1C1.png){width=850 height=auto}
 
-En este grafico podemos notar mejor la diferencia entre la distancia que recorrieron los paquetes de cada origen. Como hemos dicho anteriormente, el nodo 0 esta mas cerca y de ahi la menor distancia.
+En este grafico podemos notar como en el anterior que la estadistica de los paquetes del node[2] es mayor a los del node[0].
+Como hemos dicho anteriormente, el node[0] esta mas cerca y de ahi la menor distancia.
+Por lo que podemos concluir que la distancia que recorren los paquetes es proporcional al delay con el que llegan a destino. Cuanto mas recorren, mas delay tendran en llegar.
 
 #### Caso 2
 
@@ -164,6 +168,7 @@ En este grafico podemos notar mejor la diferencia entre la distancia que recorri
 
 Nuestro algoritmo siempre enruta los paquetes por la salida en direccion de las manecillas del reloj.
 Por lo tanto el flujo de paquetes seguira estos caminos:
+> **Flujo de transmision de paquetes**
 > Node[4] (gen) --> Node[3] (gen) --> Node[2] (gen) --> Node[1] (gen) --> Node[0] (gen) --> Node[7] (gen) --> Node[6] (gen) --> Node[5] (sink)
 
 Sabiendo esto podemos categorizar a los nodos de la siguente forma:
@@ -177,7 +182,22 @@ Sabiendo esto podemos categorizar a los nodos de la siguente forma:
 
 ![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=850 height=auto}
 
+Ahora podemos notar lo siguiente:
+
+- Los nodos *Conectores* y *Generadores* {0,1,2,3,4,6,7} tienen un comportamiento equivalente al que analizamos en el caso 1 en el node[0].
+- El nodo *Generador* no *Conector* node[4] a su vez tambien tiene un comportamiento equivalente al que analizamos en el caso 1 en el node[2].
+- Por ultimo, no observamos ningun cambio en el *Consumidor* node[5], lo que es compatible con lo analizado en el caso 1.
+
+*Cuatos paquetes de cada generador llegan al detino node[5]?*
+
 ![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=600 height=auto}
+
+Podemos notar que llegan paquetes de todos los nodos *Generadores* pero con una diferencia, llegan mas de los nodos mas cercanos en el flujo de paquetes.
+
+Esto se debe al hecho de estar el nodo 0 mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del nodo 0 al inicio del programa, de ahi la diferencia.
+
+No hay otra razon y a lo largo del tiempo deberian llagar una cantidad similar de paquetes al nodo 5 de ambos origenes.
+Esto lo podemos ver en la siguiente grafica donde ademas del delay, podemos ver el orden de llegada por fuente.
 
 ![Delay de los paquetes entregados al node 5 P1C2](./IMGs/DelayXFuente_Node5_P1C2.png){width=850 height=auto}
 
