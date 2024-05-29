@@ -83,7 +83,7 @@ Nuestro algoritmo siempre enruta los paquetes por la salida en direccion de las 
 Por lo tanto seguiran estos caminos:
 > Node 2 (gen) --> Node 1 --> Node 0 (gen) --> Node 7 --> Node 6 --> Node 5 (sink)
 
-![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=600 height=auto}
+![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=850 height=auto}
 
 >**Tipos de nodos** 
 *No utilizados:* No reciben paquetes de su app ni de ningun vecino.
@@ -127,7 +127,7 @@ En este grafico podemos notar mejor la diferencia entre la distancia que recorri
 
 <!-- 2. Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos. -->
 
-![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=600 height=auto}
+![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=850 height=auto}
 
 ![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=600 height=auto}
 
