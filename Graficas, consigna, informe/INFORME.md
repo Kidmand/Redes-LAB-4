@@ -139,18 +139,17 @@ El principal objetivo de toda red es que los paquetes lleguen desde su origen a 
 
 ![Cantidad de paquetes llegados de cada fuente P1C1](./IMGs/CantidadXFuente_Node5_P1C1.png){width=500 height=auto}
 
-Podemos notar que llegan paquetes de ambos nodos *Generadores* pero con una diferencia, llegan mas del nodo 0.
+Podemos notar que llegan paquetes de ambos nodos *Generadores* pero con una diferencia, llegan mas del node[0].
 
-Esto se debe al hecho de estar el nodo 0 mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del nodo 0 al inicio del programa, de ahi la diferencia.
+Esto se debe al hecho de estar el node[0] mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del node[0] en promedio ya que los del node[2] no solo se empiezan a enviar de mas lejos, sino que deben competir el espacio del buffer en el node[0] con los paquetes que se generan ahi mismo.
 
-No hay otra razon y a lo largo del tiempo deberian llagar una cantidad similar de paquetes al nodo 5 de ambos origenes.
-Esto lo podemos ver en la siguiente grafica donde ademas del delay, podemos ver el orden de llegada por fuente.
+*En el siguinete grafico podemos ver el delay con el que llegan los paquetes al node[5].*
 
 ![Delay de los paquetes entregados al node 5 P1C1](./IMGs/DelayXFuente_Node5_P1C1.png){width=850 height=auto}
 
-En este grafico podemos notar dos cosas:
+En este grafico podemos notar:
 
-- *Al inicio llegan mas paquetes del node 0*: Esto coicide con lo dicho antes del grafico.
+- *Llegan mas paquetes del node[0]*: Esto coicide con lo dicho antes del grafico.
 - *El delay va aumentando*: Esto esta directamente relacionado por el aumento lineal del buffer del node[0] ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
 - *El delay del node[2] es generalmente mayor al del node[0]*: Esto se debe a que los paquetes enviados desde el node[2] vienen de mas lejos que los del node[0], por lo que tardan mas tiempo.
 
@@ -158,9 +157,12 @@ En este grafico podemos notar dos cosas:
 
 ![Numero de saltos de paquetes entregados al node 5 P1C1](./IMGs/SaltosXFuente_Node5_P1C1.png){width=850 height=auto}
 
-En este grafico podemos notar como en el anterior que la estadistica de los paquetes del node[2] es mayor a los del node[0].
+En este grafico podemos observar como la distancia en saltos recorrida por los paquetes de node[2] es mayor a los del node[0].
 Como hemos dicho anteriormente, el node[0] esta mas cerca y de ahi la menor distancia.
-Por lo que podemos concluir que la distancia que recorren los paquetes es proporcional al delay con el que llegan a destino. Cuanto mas recorren, mas delay tendran en llegar.
+Por lo que podemos concluir que el aumento de la distancia que recorren los paquetes es:
+
+- Proporcional al aumento del delay con el que llegan a destino. Cuanto mas recorren, mas delay tendran en llegar.
+- Inversamente proporcional al aumento de la cantidad de paquetes que llegan a destino.
 
 #### Caso 2
 
@@ -184,7 +186,7 @@ Sabiendo esto podemos categorizar a los nodos de la siguente forma:
 
 Ahora podemos notar lo siguiente:
 
-- Los nodos *Conectores* y *Generadores* {0,1,2,3,4,6,7} tienen un comportamiento equivalente al que analizamos en el caso 1 en el node[0].
+- Los nodos *Conectores* y *Generadores* {0,1,2,3,6,7} tienen un comportamiento equivalente al que analizamos en el caso 1 en el node[0].
 - El nodo *Generador* no *Conector* node[4] a su vez tambien tiene un comportamiento equivalente al que analizamos en el caso 1 en el node[2].
 - Por ultimo, no observamos ningun cambio en el *Consumidor* node[5], lo que es compatible con lo analizado en el caso 1.
 
@@ -192,16 +194,33 @@ Ahora podemos notar lo siguiente:
 
 ![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=600 height=auto}
 
-Podemos notar que llegan paquetes de todos los nodos *Generadores* pero con una diferencia, llegan mas de los nodos mas cercanos en el flujo de paquetes.
+Podemos notar que llegan paquetes de todos los nodos *Generadores* pero con una diferencia, llegan mas de los nodos mas cercanos en el flujo de transmision de los paquetes.
 
-Esto se debe al hecho de estar el nodo 0 mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del nodo 0 al inicio del programa, de ahi la diferencia.
+Primero lleguan los paquetes de los generadores mas cercanos en promedio ya que los demas no solo se empiezan a enviar de mas lejos, sino que deben competir por el espacio del buffer en los nodos *Conectores* intermedios contra los paquetes que se generan ahi mismo.
 
-No hay otra razon y a lo largo del tiempo deberian llagar una cantidad similar de paquetes al nodo 5 de ambos origenes.
-Esto lo podemos ver en la siguiente grafica donde ademas del delay, podemos ver el orden de llegada por fuente.
+Por lo tanto, los paquetes que vienen de mas lejos se iran quedando rezagados por cada nodo generador por el que pasen. Por esta razon es que podemos ver como casi no llegan paquetes de los ultimos generadores.
+
+Luego, podemos notar que a diferencia del caso 1, la diferencia entre los datos es mayor, casi como si se redujera a la mitad. Esto es debido a que cuando llegan paquetes a un generador de otro nodo, este debe no solo enviar sus paquetes, tambien el de los demas.
+
+*En el siguinete grafico podemos ver el delay con el que llegan los paquetes al node[5].*
 
 ![Delay de los paquetes entregados al node 5 P1C2](./IMGs/DelayXFuente_Node5_P1C2.png){width=850 height=auto}
 
+En este grafico podemos notar:
+
+- *Llegan mas paquetes de los nodos mas cercanos*: Esto coicide con lo dicho antes del grafico.
+- *El delay va aumentando*: Esto esta directamente relacionado por el aumento lineal del buffer de los nodos *Generadores* y *Conectores* {0,1,2,3,6,7} ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
+- *El delay de los nodos mas lejanos es generalmente mayor al de los mas cercanos*: Esto se debe a que los paquetes enviados desde mas lejos estan a una mayor distancia y deben pasar por mas colas por lo que tardan mas tiempo.
+
+*En el siguiente grafico podemos ver una representacion visual de las distancias recorridas por los paquetes desde su origen a su destino.*
+
 ![Numero de saltos de paquetes entregados al node 5 P1C2](./IMGs/SaltosXFuente_Node5_P1C2.png){width=850 height=auto}
+
+En este grafico podemos observar como la distancia en saltos recorrida por los paquetes de los paquetes de los nodos mas alejados e el flujo es mayor a los mas cercanos.
+Por lo que podemos concluir que el aumento de la distancia que recorren los paquetes es:
+
+- Proporcional al aumento del delay con el que llegan a destino. Cuanto mas recorren, mas delay tendran en llegar. (recordar que tambien vimos que influye la situacion en los bufferes de los nodos *Conectores* por los que pasa)
+- Inversamente proporcional al aumento de la cantidad de paquetes que llegan a destino. (nuevamente, vimos que ademas influye que se vayan rezagando los paquetes)
 
 ---
 
