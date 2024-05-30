@@ -67,9 +67,9 @@ Net::~Net()
 
 void Net::initialize()
 {
-    // Se crea un mensaje para obtener la longitud de la red.
+    // Se crea y envía un mensaje para obtener la longitud de la red.
     Packet *pktLENGTH = createPacketLENGTH();
-    send(pktLENGTH, "toLnk$o", 0);
+    send(pktLENGTH, "toLnk$o", PKT_LENGTH_ROUTE);
 
     // Se crea un mensaje para enviar paquetes.
     sendPktAppEvent = new cMessage("sendPktAppEvent");
