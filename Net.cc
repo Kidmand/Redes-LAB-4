@@ -5,8 +5,6 @@
 #include <omnetpp.h>
 
 #include <packet_m.h>
-#include <packetLENGTH_m.h>
-#include <packetREADY_m.h>
 
 using namespace omnetpp;
 
@@ -15,10 +13,16 @@ class Net : public cSimpleModule
 private:
     cOutVector hopCountVector;
     cOutVector sourceVector;
-    cMessage *pktLengthEvent;
+    cMessage *sendMsgEvent;
     int networkLength;
-    int pktLengthIdentifier;
-    int pktReadyIdentifier;
+    bool readyToSend;
+    cQueue buffer;
+    // ------------------------------
+    Packet *createPacketLENGTH();
+    bool isMsgPacketLENGTH(cMessage *msg);
+    bool isPacketForThisNode(Packet *pkt);
+    void notifyReadyToSend();
+    // ------------------------------
 
 public:
     Net();
@@ -28,36 +32,35 @@ protected:
     virtual void initialize();
     virtual void finish();
     virtual void handleMessage(cMessage *msg);
-
-private:
-    PacketLENGTH *createPacketLENGTH();
-    PacketREADY *createPacketREADY();
-    bool isPacketLENGTH(cMessage *msg);
-    void notifyAppSendPkts();
 };
 
 Define_Module(Net);
 
 #endif /* NET */
 
+#define PKT_LENGTH_IDENTIFIER 2
+#define PKT_LENGTH_ROUTE 0
+
 Net::Net()
 {
-    pktLengthEvent = NULL;
+    sendMsgEvent = NULL;
+    readyToSend = false;
     networkLength = 0;
-    pktLengthIdentifier = 255;
-    pktReadyIdentifier = 256; // FIMXE: no me gusta esto y que ademas se use en app.cc
 }
 
 Net::~Net()
 {
-    cancelAndDelete(pktLengthEvent);
+    cancelAndDelete(sendMsgEvent);
 }
 
 void Net::initialize()
 {
-    // Se crea un evento para recolectar la longitud de la red:
-    pktLengthEvent = new cMessage("pktLENGTHEvent");
-    scheduleAt(simTime() + 0, pktLengthEvent);
+    // Se crea un mensaje para obtener la longitud de la red.
+    Packet *pktLENGTH = createPacketLENGTH();
+    send(pktLENGTH, "toLnk$o", 0);
+
+    // Se crea un mensaje para enviar paquetes.
+    sendMsgEvent = new cMessage("sendMsgEvent");
 
     // Se inicializan los vectores para gráficas:
     hopCountVector.setName("hopCount");
@@ -72,87 +75,104 @@ void Net::finish()
 
 void Net::handleMessage(cMessage *msg)
 {
-    // Recibe un mensaje de tipo PacketLENGTH
-    if (msg == pktLengthEvent)
+    if (msg == sendMsgEvent)
     {
-        PacketLENGTH *pktLENGTH = createPacketLENGTH();
-        send(pktLENGTH, "toLnk$o", 0);
-        delete msg; // Se elimina el mensaje porque no se usa más.
-    }
-    else if (isPacketLENGTH(msg))
-    {
-        PacketLENGTH *pktLENGTH = (PacketLENGTH *)msg;
-
-        // Si el mensaje es de origen, se guarda la longitud de la red.
-        if (pktLENGTH->getSource() == this->getParentModule()->getIndex())
+        if (!buffer.isEmpty())
         {
-            networkLength = pktLENGTH->getHopCount();
-            delete pktLENGTH;
+            // dequeue
+            Packet *pkt = (Packet *)buffer.pop();
 
-            // Se envía un mensaje a la aplicación para notificar que la red está lista.
-            notifyAppSendPkts();
+            // send
+            pkt->setHopCount(pkt->getHopCount() + 1);
+            send(pkt, "toLnk$o", 0); // FIXME: se esta mandando todo por el mismo lado, luego arreglar usando algún protocolo.
+
+            if (!sendMsgEvent->isScheduled())
+            {
+                // start the service now
+                scheduleAt(simTime() + 0, sendMsgEvent);
+            }
         }
-        // Si el mensaje no es de origen, se reenvía a otro nodo y se incrementa el contador de saltos.
-        else
+    }
+    else if (msg->arrivedOn("toApp$i"))
+    {
+        // enqueue
+        buffer.insert(msg);
+
+        if (!sendMsgEvent->isScheduled() && readyToSend)
         {
-            pktLENGTH->setHopCount(pktLENGTH->getHopCount() + 1);
-            send(msg, "toLnk$o", 0);
+            // start the service now
+            scheduleAt(simTime() + 0, sendMsgEvent);
         }
     }
     else
     {
         Packet *pkt = (Packet *)msg;
 
-        // If this node is the final destination, send to App
-        if (pkt->getDestination() == this->getParentModule()->getIndex())
+        if (isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
+        {
+            networkLength = pkt->getHopCount();
+            delete msg; // No necesitamos el paquete LENGTH.
+
+            notifyReadyToSend();
+        }
+        else if (isPacketForThisNode(pkt) && !isMsgPacketLENGTH(msg))
         {
             sourceVector.record(pkt->getSource());
             hopCountVector.record(pkt->getHopCount());
             send(msg, "toApp$o");
         }
-        // If not, forward the packet to some else... to who?
-        else
+        else if (!isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
         {
-            // We send to link interface #0, which is the
-            // one connected to the clockwise side of the ring
-            // Is this the best choice? are there others?
+            pkt->setHopCount(pkt->getHopCount() + 1);
+            send(msg, "toLnk$o", PKT_LENGTH_ROUTE);
+        }
+        else // !isPacketForThisNode(pkt) && !isPacketLENGTH(msg)
+        {
             pkt->setHopCount(pkt->getHopCount() + 1);
 
-            send(msg, "toLnk$o", 0);
+            // Enviamos el paquete por el enlace contrario al que llegó.
+            if (msg->arrivedOn("toLnk$0"))
+            {
+                send(msg, "toLnk$o", 1);
+            }
+            else
+            {
+                send(msg, "toLnk$o", 0);
+            }
         }
     }
 }
 
 // ---------------- AUXILIARY FUNCTIONS -------------------
 
-bool Net::isPacketLENGTH(cMessage *msg)
+bool Net::isPacketForThisNode(Packet *pkt)
 {
-    return msg->getKind() == pktLengthIdentifier;
+    return pkt->getDestination() == this->getParentModule()->getIndex();
 }
 
-PacketLENGTH *Net::createPacketLENGTH()
+bool Net::isMsgPacketLENGTH(cMessage *msg)
 {
-    PacketLENGTH *pktLENGTH = new PacketLENGTH("packetLENGTH", this->getParentModule()->getIndex());
+    Packet *pkt = (Packet *)msg;
+    return msg->getKind() == PKT_LENGTH_IDENTIFIER && pkt->getDestination() == pkt->getSource();
+}
+
+Packet *Net::createPacketLENGTH()
+{
+    Packet *pktLENGTH = new Packet("packetLENGTH", PKT_LENGTH_IDENTIFIER);
     pktLENGTH->setByteLength(par("packetByteSizeLENGTH"));
+
+    // Que el destino y el origen sean el mismo nodo es una invariante,
+    // porque luego lo usamos para detectar este tipo de paquetes.
     pktLENGTH->setSource(this->getParentModule()->getIndex());
+    pktLENGTH->setDestination(this->getParentModule()->getIndex());
+
     pktLENGTH->setHopCount(0);
-    pktLENGTH->setKind(pktLengthIdentifier);
 
     return pktLENGTH;
 }
 
-PacketREADY *Net::createPacketREADY()
+void Net::notifyReadyToSend()
 {
-    PacketREADY *pktREADY = new PacketREADY("packetREADY", this->getParentModule()->getIndex());
-    pktREADY->setByteLength(par("packetByteSizeREADY"));
-    pktREADY->setIsNetworkReady(true);
-    pktREADY->setKind(pktReadyIdentifier);
-
-    return pktREADY;
-}
-
-void Net::notifyAppSendPkts()
-{
-    PacketREADY *pktREADY = createPacketREADY();
-    send(pktREADY, "toApp$o");
+    readyToSend = true;
+    scheduleAt(simTime() + 0, sendMsgEvent);
 }
