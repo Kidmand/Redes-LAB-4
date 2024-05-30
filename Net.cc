@@ -246,7 +246,6 @@ PacketNETWORK *Net::createPacketNETWORK()
 
     pktNETWORK->setSource(this->getParentModule()->getIndex());
     pktNETWORK->setDestination(this->getParentModule()->getIndex());
-    pktNETWORK->setNetworkLength(networkLength);
     pktNETWORK->setIndice(0);
 
     // Inicializamos el arreglo de nodos.
