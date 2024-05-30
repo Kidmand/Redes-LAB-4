@@ -188,11 +188,11 @@ void Net::handleMessage(cMessage *msg)
         }
 
         // NOTE: Tenemos 3 variables => (2^3 = 8) casos posibles para manejar.
-        // En el código se contemplan 6 casos, los 2 restantes son los que no se contemplan.
+        //       En el código se contemplan 6 casos, los 2 restantes son los que no se contemplan.
 
         // NOTE: El caso: " isMsgPacketLENGTH(msg) && isMsgPacketNETWORK(msg) " no se debería dar nunca.
-        // Con isPacketForThisNode(pkt) = {true, false} se forman
-        // los 2 casos que no se contemplan en el código.
+        //       Con isPacketForThisNode(pkt) = {true, false} se forman
+        //       los 2 casos que no se contemplan en el código.
     }
 }
 
