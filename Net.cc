@@ -33,6 +33,7 @@ Define_Module(Net);
 
 Net::Net()
 {
+    sendMsgEvent = NULL;
 }
 
 Net::~Net()
@@ -44,9 +45,8 @@ void Net::initialize()
     hopCountVector.setName("hopCount");
     sourceVector.setName("Source");
 
-    //
-    sendMsgEvent = new cMessage("sendEventPktLENGTH");
-    scheduleAt(0, sendMsgEvent);
+    sendMsgEvent = new cMessage("sendEvent");
+    scheduleAt(simTime() + 0, sendMsgEvent);
 }
 
 void Net::finish()
@@ -61,23 +61,24 @@ void Net::handleMessage(cMessage *msg)
         PacketLENGTH *pktLENGTH = new PacketLENGTH("packetLENGTH", this->getParentModule()->getIndex());
         pktLENGTH->setByteLength(par(20));
         pktLENGTH->setSource(this->getParentModule()->getIndex());
-        pktLENGTH->setLength(0);
+        pktLENGTH->setHopCount(0);
         pktLENGTH->setKind(2);
 
-        send(pktLENGTH, "toLnk$o", 0);
+        send(pktLENGTH, "toLnk$o");
+        delete msg;
     }
     else if (msg->getKind() == 2)
     {
         PacketLENGTH *pktLENGTH = (PacketLENGTH *)msg;
-        if (pktLENGTH->getDestination() == this->getParentModule()->getIndex())
+        if (pktLENGTH->getSource() == this->getParentModule()->getIndex())
         {
-            networkLength = pktLENGTH->getLength();
+            networkLength = pktLENGTH->getHopCount();
             delete pktLENGTH;
         }
         else
         {
             pktLENGTH->setHopCount(pktLENGTH->getHopCount() + 1);
-            send(msg, "toLnk$o", 0);
+            send(msg, "toLnk$o");
         }
     }
     else

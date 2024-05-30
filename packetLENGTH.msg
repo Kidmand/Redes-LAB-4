@@ -1,4 +1,4 @@
-packet packetLENGTH {
+packet PacketLENGTH {
     int source;
-    int length;
+    int hopCount;
 }
