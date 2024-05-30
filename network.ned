@@ -14,6 +14,7 @@ simple Net
     parameters:
         @display("i=block/dispatch");
         int packetByteSizeLENGTH =  default(2);
+        int packetByteSizeNETWORK =  default(3); // El tamaño del array se suma automaticamente, por ello no se suma aca.
     gates:
         inout toApp;
         inout toLnk[];

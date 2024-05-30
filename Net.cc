@@ -5,6 +5,7 @@
 #include <omnetpp.h>
 
 #include <packet_m.h>
+#include <packetNETWORK_m.h>
 
 using namespace omnetpp;
 
@@ -13,15 +14,21 @@ class Net : public cSimpleModule
 private:
     cOutVector hopCountVector;
     cOutVector sourceVector;
-    cMessage *sendMsgEvent;
+    cMessage *sendPktAppEvent;
     int networkLength;
     bool readyToSend;
     cQueue buffer;
+    int *networkArray;
     // ------------------------------
     Packet *createPacketLENGTH();
+    PacketNETWORK *createPacketNETWORK();
     bool isMsgPacketLENGTH(cMessage *msg);
+    bool isMsgPacketNETWORK(cMessage *msg);
     bool isPacketForThisNode(Packet *pkt);
+    bool isPacketForThisNode(PacketNETWORK *pkt);
+    void sendToOppositeLnk(cMessage *msg);
     void notifyReadyToSend();
+    int routePacket(Packet *pkt);
     // ------------------------------
 
 public:
@@ -38,19 +45,23 @@ Define_Module(Net);
 
 #endif /* NET */
 
+#define PKT_NETWORK_IDENTIFIER 1
 #define PKT_LENGTH_IDENTIFIER 2
 #define PKT_LENGTH_ROUTE 0
+#define PKT_NETWORK_ROUTE 0
 
 Net::Net()
 {
-    sendMsgEvent = NULL;
+    sendPktAppEvent = NULL;
     readyToSend = false;
     networkLength = 0;
+    networkArray = NULL;
 }
 
 Net::~Net()
 {
-    cancelAndDelete(sendMsgEvent);
+    cancelAndDelete(sendPktAppEvent);
+    delete[] networkArray;
 }
 
 void Net::initialize()
@@ -60,7 +71,7 @@ void Net::initialize()
     send(pktLENGTH, "toLnk$o", 0);
 
     // Se crea un mensaje para enviar paquetes.
-    sendMsgEvent = new cMessage("sendMsgEvent");
+    sendPktAppEvent = new cMessage("sendPktAppEvent");
 
     // Se inicializan los vectores para gráficas:
     hopCountVector.setName("hopCount");
@@ -75,21 +86,23 @@ void Net::finish()
 
 void Net::handleMessage(cMessage *msg)
 {
-    if (msg == sendMsgEvent)
+    if (msg == sendPktAppEvent)
     {
         if (!buffer.isEmpty())
         {
             // dequeue
             Packet *pkt = (Packet *)buffer.pop();
 
-            // send
             pkt->setHopCount(pkt->getHopCount() + 1);
-            send(pkt, "toLnk$o", 0); // FIXME: se esta mandando todo por el mismo lado, luego arreglar usando algún protocolo.
 
-            if (!sendMsgEvent->isScheduled())
+            // send
+            int route = routePacket(pkt);
+            send(pkt, "toLnk$o", route);
+
+            if (!sendPktAppEvent->isScheduled())
             {
                 // start the service now
-                scheduleAt(simTime() + 0, sendMsgEvent);
+                scheduleAt(simTime() + 0, sendPktAppEvent);
             }
         }
     }
@@ -98,22 +111,55 @@ void Net::handleMessage(cMessage *msg)
         // enqueue
         buffer.insert(msg);
 
-        if (!sendMsgEvent->isScheduled() && readyToSend)
+        if (!sendPktAppEvent->isScheduled() && readyToSend)
         {
             // start the service now
-            scheduleAt(simTime() + 0, sendMsgEvent);
+            scheduleAt(simTime() + 0, sendPktAppEvent);
         }
     }
     else
     {
         Packet *pkt = (Packet *)msg;
 
-        if (isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
+        if (isPacketForThisNode(pkt) && isMsgPacketNETWORK(msg))
+        {
+            // Creamos el arreglo de que representa la red.
+            networkArray = new int[networkLength];
+
+            // Le damos valores al arreglo de nodos.
+            PacketNETWORK *pktNETWORK = (PacketNETWORK *)msg;
+
+            for (int i = 0; i < networkLength; ++i)
+            {
+                networkArray[i] = pktNETWORK->getNetwork(i);
+            }
+
+            delete pktNETWORK; // No necesitamos el paquete NETWORK.
+
+            // Notificamos que estamos listos para enviar paquetes.
+            notifyReadyToSend();
+        }
+        else if (!isPacketForThisNode(pkt) && isMsgPacketNETWORK(msg))
+        {
+            // Agregamos nuestro nombre al arreglo de nodos.
+            PacketNETWORK *pktNETWORK = (PacketNETWORK *)msg;
+            int indice = pktNETWORK->getIndice();
+            pktNETWORK->setNetwork(indice, (this->getParentModule()->getIndex()));
+
+            // Reducimos la longitud de la red, porque se utiliza como índice.
+            pktNETWORK->setIndice(indice + 1);
+
+            // Enviamos el paquete por el enlace contrario al que llegó.
+            sendToOppositeLnk(msg);
+        }
+        else if (isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
         {
             networkLength = pkt->getHopCount();
             delete msg; // No necesitamos el paquete LENGTH.
 
-            notifyReadyToSend();
+            // Enviamos un paquete NETWORK, para conocer la red.
+            PacketNETWORK *pktNETWORK = createPacketNETWORK();
+            send(pktNETWORK, "toLnk$o", PKT_NETWORK_ROUTE);
         }
         else if (isPacketForThisNode(pkt) && !isMsgPacketLENGTH(msg))
         {
@@ -126,29 +172,29 @@ void Net::handleMessage(cMessage *msg)
             pkt->setHopCount(pkt->getHopCount() + 1);
             send(msg, "toLnk$o", PKT_LENGTH_ROUTE);
         }
-        else // !isPacketForThisNode(pkt) && !isPacketLENGTH(msg)
+        else // !isPacketForThisNode(pkt) && !isPacketLENGTH(msg) && !isPacketNETWORK(msg)
         {
             pkt->setHopCount(pkt->getHopCount() + 1);
 
             // Enviamos el paquete por el enlace contrario al que llegó.
-            if (msg->arrivedOn("toLnk$0"))
-            {
-                send(msg, "toLnk$o", 1);
-            }
-            else
-            {
-                send(msg, "toLnk$o", 0);
-            }
+            sendToOppositeLnk(msg);
         }
     }
 }
 
-// ---------------- AUXILIARY FUNCTIONS -------------------
+// ---------------- FUNCTIONS FOR ANY PACKET ----------------
 
 bool Net::isPacketForThisNode(Packet *pkt)
 {
     return pkt->getDestination() == this->getParentModule()->getIndex();
 }
+
+bool Net::isPacketForThisNode(PacketNETWORK *pkt)
+{
+    return pkt->getDestination() == this->getParentModule()->getIndex();
+}
+
+// ------------- FUNCTIONS FOR PACKET LENGTH -----------------
 
 bool Net::isMsgPacketLENGTH(cMessage *msg)
 {
@@ -171,8 +217,78 @@ Packet *Net::createPacketLENGTH()
     return pktLENGTH;
 }
 
+// -------------- FUNCTIONS FOR PACKET NETWORK ----------------
+
+bool Net::isMsgPacketNETWORK(cMessage *msg)
+{
+    PacketNETWORK *pktNETWORK = (PacketNETWORK *)msg;
+    return msg->getKind() == PKT_NETWORK_IDENTIFIER && pktNETWORK->getDestination() == pktNETWORK->getSource();
+}
+
+PacketNETWORK *Net::createPacketNETWORK()
+{
+    PacketNETWORK *pktNETWORK = new PacketNETWORK("packetNETWORK", PKT_NETWORK_IDENTIFIER);
+    pktNETWORK->setByteLength(par("packetByteSizeNETWORK").intValue() + networkLength * 4);
+
+    pktNETWORK->setSource(this->getParentModule()->getIndex());
+    pktNETWORK->setDestination(this->getParentModule()->getIndex());
+    pktNETWORK->setNetworkLength(networkLength);
+    pktNETWORK->setIndice(0);
+
+    // Inicializamos el arreglo de nodos.
+    for (int i = 0; i < networkLength + 1; ++i)
+    {
+        pktNETWORK->appendNetwork(-1);
+    }
+
+    return pktNETWORK;
+}
+
+// ----------------- FUNCTIONS FOR SENDING -------------------
+
+void Net::sendToOppositeLnk(cMessage *msg)
+{
+    if (msg->arrivedOn("toLnk$i", 0))
+    {
+        send(msg, "toLnk$o", 1);
+    }
+    else
+    {
+        send(msg, "toLnk$o", 0);
+    }
+}
+
 void Net::notifyReadyToSend()
 {
     readyToSend = true;
     scheduleAt(simTime() + 0, sendMsgEvent);
+}
+
+// ----------------- FUNCTIONS FOR ROUTING -------------------
+
+// Para usarla tiene que esta definido el arreglo networkArray y la longitud networkLength.
+int Net::routePacket(Packet *pkt)
+{
+    int dest = pkt->getDestination();
+    bool found = false;
+
+    for (size_t i = 0; i < networkLength / 2; i++)
+    {
+        if (networkArray[i] == dest)
+        {
+
+            found = true;
+            break;
+        }
+    }
+    EV << "]" << endl;
+
+    if (found)
+    {
+        return PKT_NETWORK_ROUTE;
+    }
+    else
+    {
+        return PKT_NETWORK_ROUTE == 0 ? 1 : 0;
+    }
 }
