@@ -1,14 +1,7 @@
 /.settings
 /out
-.cproject
-.oppbuildspec
-.project
-packet_m.cc
-packet_m.h
+*_m.cc
+*_m.h
 redes24lab4g15
-lab4-kickstarter
-.qtenvrc
 INFORME-VIEJO.md
 Notebook-VIEJO.ipynb
-packetLENGTH_m.cc
-packetLENGTH_m.h
