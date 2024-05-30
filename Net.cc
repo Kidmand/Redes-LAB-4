@@ -119,6 +119,9 @@ void Net::handleMessage(cMessage *msg)
     }
     else // Si el mensaje vine por algún enlace (osea toLnk$0 || toLnk$1).
     {
+        // NOTE: Para leer el código, colapsar los bloques de if y else.
+        //       Luego abrir solo el bloque que se quiere leer.
+
         Packet *pkt = (Packet *)msg;
 
         // Si el paquete SI es para este nodo y NO es de control, lo enviamos a la aplicación.
