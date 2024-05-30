@@ -69,6 +69,7 @@ void App::handleMessage(cMessage *msg)
         {
             initSendPkt();
         }
+        delete (msg); // No se necesita más.
     }
     // else if msg is a sendMsgEvent, create and send new packet
     else if (msg == sendMsgEvent)
@@ -102,7 +103,7 @@ void App::handleMessage(cMessage *msg)
 
 bool App::isPacketREADY(cMessage *msg)
 {
-    return msg->getKind() == 3;
+    return msg->getKind() == 256;
 }
 
 void App::initSendPkt()

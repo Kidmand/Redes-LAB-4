@@ -44,8 +44,8 @@ Net::Net()
 {
     pktLengthEvent = NULL;
     networkLength = 0;
-    pktLengthIdentifier = 2;
-    pktReadyIdentifier = 3;
+    pktLengthIdentifier = 255;
+    pktReadyIdentifier = 256; // FIMXE: no me gusta esto y que ademas se use en app.cc
 }
 
 Net::~Net()
@@ -133,7 +133,7 @@ bool Net::isPacketLENGTH(cMessage *msg)
 PacketLENGTH *Net::createPacketLENGTH()
 {
     PacketLENGTH *pktLENGTH = new PacketLENGTH("packetLENGTH", this->getParentModule()->getIndex());
-    pktLENGTH->setByteLength(2);
+    pktLENGTH->setByteLength(par("packetByteSizeLENGTH"));
     pktLENGTH->setSource(this->getParentModule()->getIndex());
     pktLENGTH->setHopCount(0);
     pktLENGTH->setKind(pktLengthIdentifier);
@@ -144,7 +144,7 @@ PacketLENGTH *Net::createPacketLENGTH()
 PacketREADY *Net::createPacketREADY()
 {
     PacketREADY *pktREADY = new PacketREADY("packetREADY", this->getParentModule()->getIndex());
-    pktREADY->setByteLength(1);
+    pktREADY->setByteLength(par("packetByteSizeREADY"));
     pktREADY->setIsNetworkReady(true);
     pktREADY->setKind(pktReadyIdentifier);
 
