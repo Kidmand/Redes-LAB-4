@@ -1,3 +1,0 @@
-packet PacketREADY {
-    bool isNetworkReady;
-}
