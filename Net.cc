@@ -261,7 +261,7 @@ void Net::sendToOppositeLnk(cMessage *msg)
 void Net::notifyReadyToSend()
 {
     readyToSend = true;
-    scheduleAt(simTime() + 0, sendMsgEvent);
+    scheduleAt(simTime() + 0, sendPktAppEvent);
 }
 
 // ----------------- FUNCTIONS FOR ROUTING -------------------
