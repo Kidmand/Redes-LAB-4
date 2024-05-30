@@ -29,6 +29,7 @@ private:
     void sendToOppositeLnk(cMessage *msg);
     void notifyReadyToSend();
     int routePacket(Packet *pkt);
+    int getMyNodeName();
     // ------------------------------
 
 public:
@@ -124,14 +125,23 @@ void Net::handleMessage(cMessage *msg)
 
         Packet *pkt = (Packet *)msg;
 
-        // Si el paquete SI es para este nodo y NO es de control, lo enviamos a la aplicación.
+        // Si el paquete SI es para este nodo y NO es de "construcción de la network", lo enviamos a la aplicación.
         if (isPacketForThisNode(pkt) && !isMsgPacketLENGTH(msg) && !isMsgPacketNETWORK(msg))
         {
             sourceVector.record(pkt->getSource());
             hopCountVector.record(pkt->getHopCount());
             send(msg, "toApp$o");
         }
-        // Si el paquete SI es para este nodo y SI es de control, lo procesamos.
+        // Si el paquete SI es para este nodo y SI es de "construcción de la network", lo procesamos.
+        else if (isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
+        {
+            networkLength = pkt->getHopCount();
+            delete msg; // No necesitamos mas el paquete LENGTH.
+
+            // Enviamos un paquete NETWORK, para conocer la red.
+            PacketNETWORK *pktNETWORK = createPacketNETWORK();
+            send(pktNETWORK, "toLnk$o", PKT_NETWORK_ROUTE);
+        }
         else if (isPacketForThisNode(pkt) && isMsgPacketNETWORK(msg))
         {
             // Creamos el arreglo de que representa la red.
@@ -145,27 +155,24 @@ void Net::handleMessage(cMessage *msg)
                 networkArray[i] = pktNETWORK->getNetwork(i);
             }
 
-            delete pktNETWORK; // No necesitamos el paquete NETWORK.
+            delete pktNETWORK; // No necesitamos mas el paquete NETWORK.
 
             // Notificamos que estamos listos para enviar paquetes.
             notifyReadyToSend();
         }
-        else if (isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
+        // Si el paquete NO es para este nodo y SI es de "construcción de la network", lo procesamos.
+        else if (!isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
         {
-            networkLength = pkt->getHopCount();
-            delete msg; // No necesitamos el paquete LENGTH.
-
-            // Enviamos un paquete NETWORK, para conocer la red.
-            PacketNETWORK *pktNETWORK = createPacketNETWORK();
-            send(pktNETWORK, "toLnk$o", PKT_NETWORK_ROUTE);
+            pkt->setHopCount(pkt->getHopCount() + 1);
+            // Enviamos el paquete por el enlace contrario al que llegó.
+            sendToOppositeLnk(msg);
         }
-        // Si el paquete NO es para este nodo y SI es de control, lo procesamos.
         else if (!isPacketForThisNode(pkt) && isMsgPacketNETWORK(msg))
         {
             // Agregamos nuestro nombre al arreglo de nodos.
             PacketNETWORK *pktNETWORK = (PacketNETWORK *)msg;
             int indice = pktNETWORK->getIndice();
-            pktNETWORK->setNetwork(indice, (this->getParentModule()->getIndex()));
+            pktNETWORK->setNetwork(indice, getMyNodeName());
 
             // Reducimos la longitud de la red, porque se utiliza como índice.
             pktNETWORK->setIndice(indice + 1);
@@ -173,12 +180,7 @@ void Net::handleMessage(cMessage *msg)
             // Enviamos el paquete por el enlace contrario al que llegó.
             sendToOppositeLnk(msg);
         }
-        else if (!isPacketForThisNode(pkt) && isMsgPacketLENGTH(msg))
-        {
-            pkt->setHopCount(pkt->getHopCount() + 1);
-            send(msg, "toLnk$o", PKT_LENGTH_ROUTE);
-        }
-        // Si el paquete NO es para este nodo y NO es de control, lo enviamos a la red SIN PROCESAR.
+        // Si el paquete NO es para este nodo y NO es de "construcción de la network", lo enviamos a la red SIN PROCESAR.
         else // !isPacketForThisNode(pkt) && !isPacketLENGTH(msg) && !isPacketNETWORK(msg)
         {
             pkt->setHopCount(pkt->getHopCount() + 1);
@@ -200,12 +202,12 @@ void Net::handleMessage(cMessage *msg)
 
 bool Net::isPacketForThisNode(Packet *pkt)
 {
-    return pkt->getDestination() == this->getParentModule()->getIndex();
+    return pkt->getDestination() == getMyNodeName();
 }
 
 bool Net::isPacketForThisNode(PacketNETWORK *pkt)
 {
-    return pkt->getDestination() == this->getParentModule()->getIndex();
+    return pkt->getDestination() == getMyNodeName();
 }
 
 // ------------- FUNCTIONS FOR PACKET LENGTH -----------------
@@ -223,8 +225,9 @@ Packet *Net::createPacketLENGTH()
 
     // Que el destino y el origen sean el mismo nodo es una invariante,
     // porque luego lo usamos para detectar este tipo de paquetes.
-    pktLENGTH->setSource(this->getParentModule()->getIndex());
-    pktLENGTH->setDestination(this->getParentModule()->getIndex());
+    int myName = getMyNodeName();
+    pktLENGTH->setSource(myName);
+    pktLENGTH->setDestination(myName);
 
     pktLENGTH->setHopCount(0);
 
@@ -244,8 +247,9 @@ PacketNETWORK *Net::createPacketNETWORK()
     PacketNETWORK *pktNETWORK = new PacketNETWORK("packetNETWORK", PKT_NETWORK_IDENTIFIER);
     pktNETWORK->setByteLength(par("packetByteSizeNETWORK").intValue() + networkLength * 4);
 
-    pktNETWORK->setSource(this->getParentModule()->getIndex());
-    pktNETWORK->setDestination(this->getParentModule()->getIndex());
+    int myName = getMyNodeName();
+    pktNETWORK->setSource(myName);
+    pktNETWORK->setDestination(myName);
     pktNETWORK->setIndice(0);
 
     // Inicializamos el arreglo de nodos.
@@ -304,4 +308,11 @@ int Net::routePacket(Packet *pkt)
     {
         return PKT_NETWORK_ROUTE == 0 ? 1 : 0;
     }
+}
+
+// ----------------- FUNCTION FOR NODE NAME -------------------
+
+int Net::getMyNodeName()
+{
+    return this->getParentModule()->getIndex();
 }
