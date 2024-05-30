@@ -118,7 +118,7 @@ void Net::handleMessage(cMessage *msg)
             scheduleAt(simTime() + 0, sendPktAppEvent);
         }
     }
-    else // Si el mensaje vine por algún enlace (osea toLnk$0 || toLnk$1).
+    else // Si el mensaje vine por algún enlace (osea toLnk$i ya sea 0 o 1).
     {
         // NOTE: Para leer el código, colapsar los bloques de if y else.
         //       Luego abrir solo el bloque que se quiere leer.
@@ -174,7 +174,7 @@ void Net::handleMessage(cMessage *msg)
             int indice = pktNETWORK->getIndice();
             pktNETWORK->setNetwork(indice, getMyNodeName());
 
-            // Reducimos la longitud de la red, porque se utiliza como índice.
+            // Incrementamos el índice para que lo use el siguiente nodo.
             pktNETWORK->setIndice(indice + 1);
 
             // Enviamos el paquete por el enlace contrario al que llegó.
@@ -247,6 +247,8 @@ PacketNETWORK *Net::createPacketNETWORK()
     PacketNETWORK *pktNETWORK = new PacketNETWORK("packetNETWORK", PKT_NETWORK_IDENTIFIER);
     pktNETWORK->setByteLength(par("packetByteSizeNETWORK").intValue() + networkLength * 4);
 
+    // Que el destino y el origen sean el mismo nodo es una invariante,
+    // porque luego lo usamos para detectar este tipo de paquetes.
     int myName = getMyNodeName();
     pktNETWORK->setSource(myName);
     pktNETWORK->setDestination(myName);
