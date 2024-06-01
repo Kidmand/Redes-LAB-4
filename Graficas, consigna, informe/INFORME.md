@@ -269,8 +269,7 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 ![Buffers P2C1](./IMGs/Bufferes_P2C1.png){width=850 height=auto}
 ![Cantidad de paquetes llegados de cada fuente P2C1](./IMGs/CantidadXFuente_Node5_P2C1.png){width=600 height=auto}
 ![Delay de los paquetes entregados al node 5 P2C1](./IMGs/DelayXFuente_Node5_P2C1.png){width=850 height=auto}
-<!-- ![Buffer node[0].lnk[0] P2C1](./IMGs/Buffer_node0-lnk0_P2C1.png){width=850 height=auto}
-![Buffer node[2].lnk[1] P2C1](./IMGs/Buffer_node2-lnk1_P2C1.png){width=850 height=auto} -->
+![Buffer node[0].lnk[0] y node[2].lnk[1] P2C1](./IMGs/Delay_2Buffers_comp_Node5_P2C1.png){width=850 height=auto}
 ![Numero de saltos de paquetes entregados al node 5 P2C1](./IMGs/SaltosXFuente_Node5_P2C1.png){width=850 height=auto}
 
 #### Caso 2
