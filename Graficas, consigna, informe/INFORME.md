@@ -271,7 +271,7 @@ Aca podemos ver unos gifs que muestran como se envían estos paquetes por la red
 
 <table>
   <tr>
-    <td><strong>Obtención de información de la red:</strong></td>
+    <td><strong>Obtención de longitud de la red:</strong></td>
     <td><strong>Obtención de la topología de la red:</strong></td>
   </tr>
   <tr>
