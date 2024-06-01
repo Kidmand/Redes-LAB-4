@@ -28,6 +28,8 @@ Hemos tomado los siguientes datos para estudiar el efecto de los diferentes algo
 Introducir que vamos a dividir el informe en dos partes y que luego las compararemos.
 -->
 
+<!-- FIXME: COMPLETAR ... -->
+
 ---
 
 ## Introducción
@@ -39,9 +41,13 @@ Describir el estado del arte. (trabajos previos) ..."
 - Metodología de trabajo.
 -->
 
+<!-- FIXME: COMPLETAR ... -->
+
 ### Generalidades y definiciones
 
 <!-- Agregar definiciones generales, teoría para ya dar por sentada en ambas partes. -->
+
+<!-- FIXME: COMPLETAR ... -->
 
 #### Topología de red y Estructura interna de los nodos
 
@@ -69,6 +75,8 @@ Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada
   - Explicar caso 1: su ventaja, problemas, que esperamos ver, etc.
   - Explicar caso 2: su ventaja, problemas, que esperamos ver, etc.
     -->
+
+<!-- FIXME: COMPLETAR ... -->
 
 #### Tipos de nodos en un flujo de datos
 
@@ -447,10 +455,13 @@ _En el siguiente gráfico podemos ver una representación visual de las distanci
 Evalúe y compare su estrategia con los casos 1 y 2 de la tarea de análisis . ¿Cuánto4
 mejoran las métricas? ¿Por qué?
 -->
+<!-- FIXME: COMPLETAR ... -->
 
 ### Discusiones
 
 <!-- cualquier cosa que no entre en la comparación de resultados va aca, ej: posibles mejoras, obs,conclusiones, ... -->
+
+<!-- FIXME: COMPLETAR ... -->
 
 ---
 
