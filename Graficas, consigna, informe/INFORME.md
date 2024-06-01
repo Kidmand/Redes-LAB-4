@@ -246,9 +246,34 @@ Por lo que podemos concluir que el aumento de la distancia que recorren los paqu
 - Describimos el algoritmo.
 -->
 
+Nuestro algoritmo se divide en dos partes:
+
+1. **Obtención de información de la red.**
+2. **Enrutamiento de los paquetes.**
+
+En la primera parte (**obtención de información de la red**), nos enfocamos en obtener como esta conformada la red circular. Para ello, cada nodo independientemente genera paquetes para conseguirlo. Específicamente cada nodo genere dos paquetes:
+
+- Un paquete para obtener la longitud de la red.
+  - Esto lo consigue con un paquete que tiene destino y origen en el mismo nodo que a su vez cuenta los saltos que da hasta llegar al final.
+- Un paquete para obtener la topología de la red con el nombre de cada nodo y su lugar en la circunferencia.
+  - Sabiendo la longitud de la red N, este paquete tiene un arreglo [a1, a2, ... , aN] que también tiene como destino y origen el mismo nodo.
+  - Este arreglo se va modificando en cada nodo que pasa, agregando el nombre del nodo en el que se encuentra.
+
+El echo que la red sea circular nos permite que los paquetes no se pierdan y que se pueda obtener la información de la red de forma correcta. Esto no es un dato menor, debido a que en nuestro algoritmo los paquetes que **no son para el nodo local** son enviados por la **interfaz contraria a la que llegaron**.
+
+En la segunda parte (**enrutamiento de los paquetes**), nos enfocamos en enviar los paquetes a su destino. Para ello, cada nodo recibe los paquetes desde su app y calcula la ruta mas corta para llegar al destino.
+Esto lo consigue porque cada nodo tiene un arreglo con `[nombre_vecino1, nombre_vecino2, ... , nombre_vecinoN]`, tal que el `nombre_vecino1` es el nombre del **nodo que esta primero por la interfaz que se mando el paquete para obtener la topología** de la red. Supongamos que se mando por la **interfaz 0**, entonces el `nombre_vecinoN` es el nombre del nodo que esta primero por la **interfaz 1**. De esta forma podemos ver por cual interfaz nos conviene enviar el paquete. Si el destino del paquete esta en `[nombre_vecino1, nombre_vecino2, ... , nombre_vecino(N/2)]` (observar que miramos solo la mitad del arreglo) entonces se envía por la **interfaz 0**, sino por la **interfaz 1**.
+Luego como mencionamos antes como los paquetes que no son para el nodo local son enviados por la interfaz contraria a la que llegaron, si el paquete no es para el nodo local, se envía por la interfaz contraria a la que llego. De esta forma conseguimos que los paquetes lleguen a su destino por la ruta mas corta en al red circular.
+
+Queda una cosa pendiente, mientras estamos obteniendo información de la red, no podemos enviar paquetes "de datos". Por lo que decidimos que si un paquete llega mientras estamos obteniendo la topología de la red, lo guardamos en un buffer y lo enviamos cuando terminamos de obtener la topología.
+
 #### Como llegamos a esa idea
 
 <!-- Como llegamos a esa idea. -->
+
+Esta idea surge primero, porque pensamos, que pasa si suponemos que cada nodo conoce la topología de la red. Si pasa esto es fácil ver que cada nodo puede calcular la ruta mas corta para llegar a cualquier otro nodo debido a que la red es circular.
+Por esta razón nos pusimos a pensar como hacer que cada nodo conozca la topología de la red. Lo primero que notamos fue que es muy fácil que un paquete recorra toda la red y que llegue nuevamente a donde empezó y lo mejor es que la forma de recorrerlo es siempre en orden. Por esto llegamos a la idea de que si un paquete llega por una interfaz entonces se envía por la contraria.
+Nos faltaba tener la topología de la red, lo primero que pensamos si ya tenemos una forma de enviar un paquete que pasa por todos en orden y llega nuevamente a su origen, entonces podemos hacer que cada nodo genere un paquete que recorre toda la red en donde todos los otros nodos agregue su nombre a una lista y que esta lista llegue al final a su origen. De esta forma podemos obtener la topología de la red. Pero una lista en un paquete nos pareció muy poco eficiente y realista, por ello preferimos usar un arreglo, pero para usar un arreglo antes debemos definir su tamaño, asi se nos ocurrió que si cada nodo primero genere un paquete que cuenta los saltos que da hasta llegar al final, entonces finalmente podemos saber la longitud de la red y por lo tanto el tamaño del arreglo. De esta forma conseguimos la topología de la red con un arreglo que recorre toda la red, cada nodo agrega su nombre y llega nuevamente a su origen.
 
 #### Hipótesis de porque creemos que va a funcionar
 
@@ -256,7 +281,11 @@ Por lo que podemos concluir que el aumento de la distancia que recorren los paqu
 - Una pequeña hipótesis de porque creemos que va a funcionar.
 -->
 
+Creemos que va a funcionar porque **la etapa de obtener información de la red es bastante simple y efectiva**. En otras palabras, los paquetes generados para ello son livianos, enviados rápidamente y no requieren mucho procesamiento.
+Por otro lado, la etapa de enrutamiento de los paquetes es también simple y efectiva. Cada nodo tiene la información necesaria para saber por donde enviar los paquetes y lo hace de forma rápida y eficiente. Además, como la red es circular, **siempre elije la ruta mas corta para llegar al destino**.
+
 ### Resultados
+
 <!-- Gráficos y análisis de los mismos
 estudiar las métricas tomadas. ¿Qué métricas se obtienen? ¿Cómo es el uso de los recursos de la red? ¿Se puede mejorar?
 ¿Hay loops de enrutamiento? Más allá de lo que llegó
@@ -278,7 +307,6 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 ![Cantidad de paquetes llegados de cada fuente P2C2](./IMGs/CantidadXFuente_Node5_P2C2.png){width=600 height=auto}
 ![Delay de los paquetes entregados al node 5 P2C2](./IMGs/DelayXFuente_Node5_P2C2.png){width=850 height=auto}
 ![Numero de saltos de paquetes entregados al node 5 P2C2](./IMGs/SaltosXFuente_Node5_P2C2.png){width=850 height=auto}
-
 
 ---
 
