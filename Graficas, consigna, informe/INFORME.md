@@ -125,8 +125,8 @@ _Como afecta al buffer de cada nodo esta distribución?_
 
 ![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=850 height=auto}
 
-Como deducimos anteriormente, los nodos no utilizan .lnk[1] debido a nuestro algoritmo, por lo que habremos como si no existiecen hasta la parte 2.
-En el grafico podemos notar lo siguiente:
+Como deducimos anteriormente, los nodos no utilizan .lnk[1] debido a nuestro algoritmo, por lo que habremos como si no existiesen hasta la parte 2.
+En el gráfico podemos notar lo siguiente:
 
 - Los nodos _No utilizados_ {3,4} y el _Consumidor_ {5} no utilizan su buffer.
   Esto se puede explicar debido a que ninguno transmite ni re-transmite paquetes.
