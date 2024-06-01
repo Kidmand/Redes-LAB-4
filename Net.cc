@@ -15,9 +15,9 @@ private:
     cOutVector hopCountVector;
     cOutVector sourceVector;
     cMessage *sendPktAppEvent;
-    int networkLength;
-    bool readyToSend;
     cQueue buffer;
+    bool readyToSend;
+    int networkLength;
     int *networkArray;
     // ------------------------------
     Packet *createPacketLENGTH();
@@ -300,7 +300,6 @@ int Net::routePacket(Packet *pkt)
             break;
         }
     }
-    EV << "]" << endl;
 
     if (found)
     {
