@@ -108,11 +108,11 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 
 > _Recordemos:_ En este caso, los nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos.
 
-Nuestro algoritmo siempre enruta los paquetes por la salida en dirección de las manecillas del reloj.
+Nuestro algoritmo siempre enruta los paquetes por la salida en dirección de las manecillas del reloj, osea por node[i].lnk[0].
 Por lo tanto el flujo de paquetes seguirá estos caminos:
 
 > **Flujo de transmisión de paquetes**
-> Node[2] (gen) --> Node[1] --> Node[0] (gen) --> Node[7] --> Node[6] --> Node[5] (sink)
+> Node[2].lnk[0] (gen) --> Node[1].lnk[0] --> Node[0].lnk[0] (gen) --> Node[7].lnk[0] --> Node[6].lnk[0] --> Node[5] (sink)
 
 Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 
@@ -125,7 +125,8 @@ _Como afecta al buffer de cada nodo esta distribución?_
 
 ![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=850 height=auto}
 
-Podemos notar lo siguiente:
+Como deducimos anteriormente, los nodos no utilizan .lnk[1] debido a nuestro algoritmo, por lo que habremos como si no existiecen hasta la parte 2.
+En el grafico podemos notar lo siguiente:
 
 - Los nodos _No utilizados_ {3,4} y el _Consumidor_ {5} no utilizan su buffer.
   Esto se puede explicar debido a que ninguno transmite ni re-transmite paquetes.
@@ -182,7 +183,7 @@ Nuestro algoritmo siempre enruta los paquetes por la salida en dirección de las
 Por lo tanto el flujo de paquetes seguirá estos caminos:
 
 > **Flujo de transmisión de paquetes**
-> Node[4] (gen) --> Node[3] (gen) --> Node[2] (gen) --> Node[1] (gen) --> Node[0] (gen) --> Node[7] (gen) --> Node[6] (gen) --> Node[5] (sink)
+> Node[4].lnk[0] (gen) --> Node[3].lnk[0] (gen) --> Node[2].lnk[0] (gen) --> Node[1].lnk[0] (gen) --> Node[0].lnk[0] (gen) --> Node[7].lnk[0] (gen) --> Node[6].lnk[0] (gen) --> Node[5] (sink)
 
 Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 
@@ -256,7 +257,6 @@ Por lo que podemos concluir que el aumento de la distancia que recorren los paqu
 -->
 
 ### Resultados
-
 <!-- Gráficos y análisis de los mismos
 estudiar las métricas tomadas. ¿Qué métricas se obtienen? ¿Cómo es el uso de los recursos de la red? ¿Se puede mejorar?
 ¿Hay loops de enrutamiento? Más allá de lo que llegó
@@ -266,7 +266,20 @@ En el caso 2 explore y determine a partir de qué valor de interArrivalTime se p
 
 #### Caso 1
 
+![Buffers P2C1](./IMGs/Bufferes_P2C1.png){width=850 height=auto}
+![Cantidad de paquetes llegados de cada fuente P2C1](./IMGs/CantidadXFuente_Node5_P2C1.png){width=600 height=auto}
+![Delay de los paquetes entregados al node 5 P2C1](./IMGs/DelayXFuente_Node5_P2C1.png){width=850 height=auto}
+<!-- ![Buffer node[0].lnk[0] P2C1](./IMGs/Buffer_node0-lnk0_P2C1.png){width=850 height=auto}
+![Buffer node[2].lnk[1] P2C1](./IMGs/Buffer_node2-lnk1_P2C1.png){width=850 height=auto} -->
+![Numero de saltos de paquetes entregados al node 5 P2C1](./IMGs/SaltosXFuente_Node5_P2C1.png){width=850 height=auto}
+
 #### Caso 2
+
+![Buffers P2C2](./IMGs/Bufferes_P2C2.png){width=850 height=auto}
+![Cantidad de paquetes llegados de cada fuente P2C2](./IMGs/CantidadXFuente_Node5_P2C2.png){width=600 height=auto}
+![Delay de los paquetes entregados al node 5 P2C2](./IMGs/DelayXFuente_Node5_P2C2.png){width=850 height=auto}
+![Numero de saltos de paquetes entregados al node 5 P2C2](./IMGs/SaltosXFuente_Node5_P2C2.png){width=850 height=auto}
+
 
 ---
 
