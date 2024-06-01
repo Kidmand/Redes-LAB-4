@@ -16,6 +16,13 @@ Para ello tomaremos estadísticas y probaremos diferentes casos con ambos algori
 
 ## Estructura del informe
 
+<!-- Explicar como se estructurara el informe brevemente -->
+<!-- Presentar brevemente la estructura del informe. Dar algunos detalles mas del proyecto.
+Introducir que vamos a dividir el informe en dos partes y que luego las compararemos.
+-->
+
+El informe se divide en dos partes, en la **primera parte** se estudiará el algoritmo de enrutamiento dado por la cátedra y en la **segunda parte** se estudiará un algoritmo de enrutamiento propuesto por nosotros. En cada parte se estudiarán **dos casos diferentes**.
+
 Hemos tomado los siguientes datos para estudiar el efecto de los diferentes algoritmos de enrutamiento en los casos propuestos:
 
 - Utilización de los buffers de la red (Buffer Size)
@@ -23,12 +30,7 @@ Hemos tomado los siguientes datos para estudiar el efecto de los diferentes algo
 - Paquetes llegados a node 5 app por origen (Source)
 - Cantidad de saltos utilizados por cada paquete por origen (hopCount y Source)
 
-<!-- Explicar como se estructurara el informe brevemente -->
-<!-- Presentar brevemente la estructura del informe. Dar algunos detalles mas del proyecto.
-Introducir que vamos a dividir el informe en dos partes y que luego las compararemos.
--->
-
-<!-- FIXME: COMPLETAR ... -->
+Finalmente, se compararán los resultados obtenidos en ambas partes y se sacarán conclusiones.
 
 ---
 
