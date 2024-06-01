@@ -366,19 +366,20 @@ _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al
 
 ![Delay de los paquetes entregados al node 5 P2C1](./IMGs/DelayXFuente_Node5_P2C1.png){width=850 height=auto}
 
-<!-- FIXME: COMPLETAR ... -->
-
-<!-- FIXME: Que se ve en este gráfico? -->
-
-![Buffer node[0].lnk[0] y node[2].lnk[1] P2C1](./IMGs/Delay_2Buffers_comp_Node5_P2C1.png){width=850 height=auto}
-
-<!-- FIXME: COMPLETAR ... -->
+Podemos ver que el delay de los paquetes que llegan al node[5] copia el comportamiento de la utilización de los buffers de los nodos _Generadores_ {2,0}. Esto es debido a que el único buffer en donde los paquetes se almacenan por cierto tiempo es en el buffer de los nodos _Generadores_ {2,0}. En los demás nodos, los paquetes llegan y se envían inmediatamente.
+Por lo que el delay de los paquetes que llegan al node[5] es directamente proporcional a la utilización de los buffers de los nodos _Generadores_ {2,0}.
 
 _En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
 
 ![Numero de saltos de paquetes entregados al node 5 P2C1](./IMGs/SaltosXFuente_Node5_P2C1.png){width=850 height=auto}
 
-<!-- FIXME: COMPLETAR ... -->
+Claramente podemos ver como ya habíamos mostrado al inicio de este análisis, **las rutas tienen la misma cantidad de saltos que la red porque justo los caminos mas cortos coinciden en esto** (esto es particular del caso1). Las rutas mas cortas son con 3 saltos, por lo que todos los paquetes llegan con 3 saltos y no pueden llegar con menos.
+
+<!-- FIXME: Que se ve en este gráfico? Creo que muestra lo mismo que "DelayXFuente_Node5_P2C1"
+
+![Buffer node[0].lnk[0] y node[2].lnk[1] P2C1](./IMGs/Delay_2Buffers_comp_Node5_P2C1.png){width=850 height=auto}
+
+-->
 
 #### Caso 2
 
