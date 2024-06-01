@@ -47,7 +47,19 @@ Describir el estado del arte. (trabajos previos) ..."
 
 <!-- Agregar definiciones generales, teoría para ya dar por sentada en ambas partes. -->
 
-<!-- FIXME: COMPLETAR ... -->
+A lo largo del informe utilizaremos los siguientes términos para referirnos a cosas relacionadas **con los nodos**:
+
+- **App:** Capa de aplicación de un nodo que genera paquetes.
+- **Buffers:** Espacio de almacenamiento temporal en un nodo.
+- **Interfaz:** Conexión entre dos nodos.
+
+También mencionamos los siguientes conceptos relacionados **con la red**:
+
+- **Enrutamiento:** Proceso de seleccionar un camino en una red a través del cual se enviarán los paquetes.
+- **Salto:** Un salto es el paso de un paquete de un nodo a otro.
+- **Cantidad de saltos:** Cantidad de saltos que realiza un paquete desde su origen hasta su destino.
+- **Caminos más cortos:** Rutas que minimizan la cantidad de saltos entre dos nodos.
+- **Topología de red:** Estructura de la red que define cómo están conectados los nodos.
 
 #### Topología de red y Estructura interna de los nodos
 
