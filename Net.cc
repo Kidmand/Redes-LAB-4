@@ -46,8 +46,11 @@ Define_Module(Net);
 
 #endif /* NET */
 
+// NOTE: Si o si los IDENTIFIER de estos
+//       paquetes tienen que ser distintos.
 #define PKT_NETWORK_IDENTIFIER 1
 #define PKT_LENGTH_IDENTIFIER 2
+
 #define PKT_LENGTH_ROUTE 0
 #define PKT_NETWORK_ROUTE 0
 
