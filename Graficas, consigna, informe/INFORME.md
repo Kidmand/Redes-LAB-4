@@ -297,8 +297,8 @@ Aca podemos ver unos gifs que muestran como se envían estos paquetes por la red
     <td><strong>Obtención de la topología de la red:</strong></td>
   </tr>
   <tr>
-    <td><img src="./GIFs/paquete-length.gif" width="300"></td>
-    <td><img src="./GIFs/paquete-network.gif" width="300"></td>
+    <td><img src="./GIFs/paquete-length-r.gif" width="300"></td>
+    <td><img src="./GIFs/paquete-network-r.gif" width="300"></td>
   </tr>
 </table>
 
@@ -350,7 +350,7 @@ Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 
 Aca podemos ver como se envían los paquetes "de datos" por la red de nuestra simulación:
 
-<img src="./GIFs/parte2-caso1-solo-pkt-datos.gif" width="300" alt="GIF de enrutamiento en PART2-CASO1">
+<img src="./GIFs/parte2-caso1-solo-pkt-datos-r.gif" width="300" alt="GIF de enrutamiento en PART2-CASO1">
 
 Pero antes de analizar esto, debemos tener en cuenta que hay algo nuevo en comparación a la **Parte1** (osea sin nuestro algoritmo).
 En la **Parte2** ademas del enrutamiento de los paquetes, también se obtiene información de la red. Pero esto solo sucede al principio de la simulación y afecta a todos los nodos por igual (específicamente en los buffers de lnk[0]).
@@ -429,7 +429,7 @@ Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 
 Aca podemos ver como se envían los paquetes "de datos" por la red de nuestra simulación:
 
-<img src="./GIFs/parte2-caso2-solo-pkt-datos.gif" width="300" alt="GIF de enrutamiento en PART2-CASO1">
+<img src="./GIFs/parte2-caso2-solo-pkt-datos-r.gif" width="300" alt="GIF de enrutamiento en PART2-CASO1">
 
 Nuevamente como en el caso 1, antes de analizar esto, debemos tener en cuenta que al inicio de la simulación se obtiene la información de la red con algunos paquetes. Esto es siempre igual en nuestro algoritmo.
 
