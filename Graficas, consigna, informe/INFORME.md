@@ -156,7 +156,7 @@ El principal objetivo de toda red es que los paquetes lleguen desde su origen a 
 
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
-![Cantidad de paquetes llegados de cada fuente P1C1](./IMGs/CantidadXFuente_Node5_P1C1.png){width=500 height=auto}
+![Cantidad de paquetes llegados de cada fuente P1C1](./IMGs/CantidadXFuente_Node5_P1C1.png){width=400 height=auto}
 
 Podemos notar que llegan paquetes de ambos nodos _Generadores_ pero con una diferencia, llegan mas del node[0].
 
@@ -212,7 +212,7 @@ Ahora podemos notar lo siguiente:
 
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
-![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=600 height=auto}
+![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=400 height=auto}
 
 Podemos notar que llegan paquetes de todos los nodos _Generadores_ pero con una diferencia, llegan mas de los nodos mas cercanos en el flujo de transmisión de los paquetes.
 
@@ -365,7 +365,7 @@ Como en la **Parte1** el principal objetivo de toda red es que los paquetes lleg
 
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
-![Cantidad de paquetes llegados de cada fuente P2C1](./IMGs/CantidadXFuente_Node5_P2C1.png){width=600 height=auto}
+![Cantidad de paquetes llegados de cada fuente P2C1](./IMGs/CantidadXFuente_Node5_P2C1.png){width=400 height=auto}
 
 Lo primero que podemos notar es que el máximo de paquetes que llegan al node[5] es mayor al que en la **Parte1**, esto es justamente porque cada nodo _Generador_ envía paquetes por su ruta más corta y encima estas rutas no se superponen, generando que se utilice la red en su maxima capacidad.
 Pero igualmente podemos notar una leve diferencia entre los paquetes que llegan desde el node[2] y el node[0], esto es debido a que el node[0], la diferencia es insignificante, esto es generado por como las app de los nodos generan los paquetes.
@@ -453,7 +453,7 @@ Vemos la distancia (en cantidad de saltos hasta llegar) de cada nodo al nodo[5] 
 
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
-![Cantidad de paquetes llegados de cada fuente P2C2](./IMGs/CantidadXFuente_Node5_P2C2.png){width=600 height=auto}
+![Cantidad de paquetes llegados de cada fuente P2C2](./IMGs/CantidadXFuente_Node5_P2C2.png){width=400 height=auto}
 
 En la gráfica se ve una clara relación con el cuadro anterior. Podemos ver como los nodos que forman el camino `nodo[1] --> nodo[2] --> nodo[3] --> nodo[4] --> nodo[5]` y `nodo[0] --> nodo[7] --> nodo[6] --> nodo[5]`, exactamente este orden esta relacionado con la cantidad de paquetes que llegan al destino. Esto justamente se debe justamente a la distancia que recorren los paquetes para llegar al `nodo[5]`. A mayor distancia, menos paquetes llegan porque hay más nodos por los que pasar, los cuales también tienen su app generando paquetes.
 Un detalle, es que el `nodo[4]` envía menos paquetes que el `nodo[6]` y ambos se encuentran a la misma distancia del `nodo[5]`. Esto se debe a que el `nodo[4]` tiene mas nodos anteriores que le envían paquetes por lo tanto su buffer se llena más rápido y le deja menos prioridad a los paquetes de su app. Exactamente sucede porque el `nodo[4]` tiene 3 nodos anteriores que le envían paquetes y el `nodo[6]` solo 2.
