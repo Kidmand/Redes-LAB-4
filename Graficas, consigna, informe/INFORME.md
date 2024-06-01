@@ -425,8 +425,6 @@ _¿Cómo afecta al buffer de cada nodo esta distribución?_
 
 ![Buffers P2C2](./IMGs/Bufferes_P2C2.png){width=850 height=auto}
 
-<!-- FIXME: COMPLETAR ... -->
-
 En este gráfico podemos notar lo siguiente:
 
 - Primero podemos notar como los nodos _Generadores_ {0,1}, solo utilizan sus buffers `lnk[0]` o `lnk[1]` según correspondan y no le llegan paquetes de la otra interfaz. Esto genera principalmente que la utilización de sus buffers unicamente dependa de como le llegan los paquetes de su app. Por ello podemos ver como la utilización de sus buffers coinciden con `exponential(1)`.
