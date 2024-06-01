@@ -427,21 +427,40 @@ _¿Cómo afecta al buffer de cada nodo esta distribución?_
 
 <!-- FIXME: COMPLETAR ... -->
 
+En este gráfico podemos notar lo siguiente:
+
+- Primero podemos notar como los nodos _Generadores_ {0,1}, solo utilizan sus buffers `lnk[0]` o `lnk[1]` según correspondan y no le llegan paquetes de la otra interfaz. Esto genera principalmente que la utilización de sus buffers unicamente dependa de como le llegan los paquetes de su app. Por ello podemos ver como la utilización de sus buffers coinciden con `exponential(1)`.
+- Luego como el resto de nodos _Generadores_ {2,3,4,6,7} utilizan sus buffers `lnk[1]` o `lnk[0]` según sus rutas. Pero a diferencia de los nodos _Generadores_ {0,1}, estos nodos también reciben paquetes de la otra interfaz. Esto sumado a que ademas generan paquetes y los envían más lento de lo que les llegan, produce que la utilización de sus buffers crezca sin parar en el tiempo. Sumado a esto, podemos ver como los nodos {4,6} crecen mas rápido que los nodos {2,3,7} esto es debido a que ellos están mas cerca del nodo {5}. Es importante todo este punto porque las capacidades de los buffers son finito y a la larga se llenarán, entonces se podrían perder paquetes.
+- Por otra parte podemos ver como el nodo _Consumidor_ {5} no utiliza su buffer (aunque se ve movimiento en su `lnk[0]`, ignorarlo por ahora), esto es debido a que los paquetes que le llegan son enviados directamente a su app, por lo que no se almacenan en el buffer.
+- Finalmente podemos ver como los nodos que envían paquetes de datos por `lnk[1]` (y el nodo _Consumidor_ {5}), sus buffers en `lnk[0]` tienen una utilización muy baja al principio de la simulación, esto es debido a la primera parte de obtener la información de la red. Pero luego de esto, no se utilizan. Notar que esto pasa en todos los nodos pero no se llega a ver en el resto de nodos porque es insignificante esta utilización.
+- _En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
+
+![Numero de saltos de paquetes entregados al node 5 P2C2](./IMGs/SaltosXFuente_Node5_P2C2.png){width=850 height=auto}
+
+En este gráfico se muy claro que justamente cada nodo esta eligiendo la ruta más corta para llegar al `nodo[5]`. Por lo que podemos ver como los paquetes producidos por cada nodo llegan con la menor cantidad de saltos posibles. Uno de nuestros objetivos en el diseño de nuestro algoritmo.
+Vemos la distancia (en cantidad de saltos hasta llegar) de cada nodo al nodo[5] en una tabla:
+
+| Nodo        | Distancia |
+| ----------- | --------- |
+| 1           | 4         |
+| 2           | 3         |
+| 3           | 2         |
+| 4           | 1         |
+| 5 (Destino) | 0         |
+| 6           | 1         |
+| 7           | 2         |
+| 0           | 3         |
+
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
 ![Cantidad de paquetes llegados de cada fuente P2C2](./IMGs/CantidadXFuente_Node5_P2C2.png){width=600 height=auto}
 
-<!-- FIXME: COMPLETAR ... -->
+En la gráfica se ve una clara relación con el cuadro anterior. Podemos ver como los nodos que forman el camino `nodo[1] --> nodo[2] --> nodo[3] --> nodo[4] --> nodo[5]` y `nodo[0] --> nodo[7] --> nodo[6] --> nodo[5]`, exactamente este orden esta relacionado con la cantidad de paquetes que llegan al destino. Esto justamente se debe justamente a la distancia que recorren los paquetes para llegar al `nodo[5]`. A mayor distancia, menos paquetes llegan porque hay más nodos por los que pasar, los cuales también tienen su app generando paquetes.
+Un detalle, es que el `nodo[4]` envía menos paquetes que el `nodo[6]` y ambos se encuentran a la misma distancia del `nodo[5]`. Esto se debe a que el `nodo[4]` tiene mas nodos anteriores que le envían paquetes por lo tanto su buffer se llena más rápido y le deja menos prioridad a los paquetes de su app. Exactamente sucede porque el `nodo[4]` tiene 3 nodos anteriores que le envían paquetes y el `nodo[6]` solo 2.
 
 _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al node[5]._
 
 ![Delay de los paquetes entregados al node 5 P2C2](./IMGs/DelayXFuente_Node5_P2C2.png){width=850 height=auto}
-
-<!-- FIXME: COMPLETAR ... -->
-
-_En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
-
-![Numero de saltos de paquetes entregados al node 5 P2C2](./IMGs/SaltosXFuente_Node5_P2C2.png){width=850 height=auto}
 
 <!-- FIXME: COMPLETAR ... -->
 
