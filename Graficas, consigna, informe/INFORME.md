@@ -67,26 +67,29 @@ La red consta de 8 nodos conectados en forma de anillo, cada uno con dos interfa
 
 Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada vecino), una capa de red (net) y una capa de aplicación (app). La capa de aplicación y la capa de enlace implementan generadores de tráfico y buffers respectivamente.
 
+La app genera el trafico segun los siguientes parametros:
+
+- _interArrivalTime_: Velocidad con la que se generan los paquetes desde la app del nodo.
+- _packetByteSize_: Tamaño de los paquetes de datos generados desde la app.
+
 ![Topología Red Anillo](./IMGs/Topologia_Red_Anillo.png){width=500 height=auto}
 
-<!-- TODO: Explicar interArrivalTime y packetByteSize -->
-
 #### Problemáticas
-
 <!--
-- Definir el problema y contextualizar al lector con definiciones básicas.
+- Definir el problema.
   + "Nosotros en las redes vamos a encontrar tal y tal problema ..."
 -->
+Nosotros en la capa de red, en el enrutamiento de los paquetes nos enfrentamos al problema de maximizar la eficiencia con la que llegan a su destino. Para conseguir esto hay muchas estrategias, cada una mas apta dependiendo la topología y cantidad de interfaces por nodo, y nuestro objetivo es encontar la mas apta en nuestro caso consiguiendo una eficiencia aceptable.
 
 #### Casos de estudio
 
 - _Caso 1:_ Nodos (0,2) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre ambos nodos.
 - _Caso 2:_ Nodos (0,1,2,3,4,6,7) generan tráfico hacia el node[5] con packetByteSize e interArrivalTime idénticos entre todos los nodos.
-<!--
-- Presentación de nuestros casos de estudio.
-  - Explicar caso 1: su ventaja, problemas, que esperamos ver, etc.
-  - Explicar caso 2: su ventaja, problemas, que esperamos ver, etc.
-    -->
+
+En ambos casos de estudio:
+
+- _interArrivalTime_ = `exponential(1)`
+- _packetByteSize_ = `125000`
 
 #### Tipos de nodos en un flujo de datos
 
@@ -108,12 +111,6 @@ Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada
 -->
 
 Cada paquete que recibe un nodo enrutador es evaluado para determinar si el nodo local es el destino final del mismo. En caso de que lo sea, el paquete es enviado a la capa de aplicación local. En caso de que el paquete esté destinado a otro nodo, la capa de red se encarga de re-transmitirlo por la interface número 0 (toLnk [0]) que es la que envía el tráfico en sentido de las manecillas del reloj a lo largo del anillo hasta llegar al destino.
-
-<!--****
-#### Hipótesis
-QUESTION: va una hip en esta parte?
-- Una pequeña hipótesis de porque creemos que va a funcionar.
--->
 
 ### Resultados
 
@@ -386,6 +383,9 @@ _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al
 
 ![Delay de los paquetes entregados al node 5 P2C1](./IMGs/DelayXFuente_Node5_P2C1.png){width=850 height=auto}
 
+<!-- OPTIONAL: comparar delay con:
+![Buffer node[0].lnk[0] y node[2].lnk[1] P2C1](./IMGs/Delay_2Buffers_comp_Node5_P2C1.png){width=850 height=auto} -->
+
 Podemos ver que el delay de los paquetes que llegan al node[5] copia el comportamiento de la utilización de los buffers de los nodos _Generadores_ {2,0}. Esto es debido a que el único buffer en donde los paquetes se almacenan por cierto tiempo es en el buffer de los nodos _Generadores_ {2,0}. En los demás nodos, los paquetes llegan y se envían inmediatamente.
 Por lo que el delay de los paquetes que llegan al node[5] es directamente proporcional a la utilización de los buffers de los nodos _Generadores_ {2,0} para este caso de estudio.
 
@@ -394,12 +394,6 @@ _En el siguiente gráfico podemos ver una representación visual de las distanci
 ![Numero de saltos de paquetes entregados al node 5 P2C1](./IMGs/SaltosXFuente_Node5_P2C1.png){width=850 height=auto}
 
 Claramente podemos ver como ya habíamos mostrado al inicio de este análisis, **las rutas tienen la misma cantidad de saltos que la red porque justo los caminos más cortos coinciden en esto** (esto es particular del caso1). Las rutas mas cortas son con 3 saltos, por lo que todos los paquetes llegan con 3 saltos y no pueden llegar con menos.
-
-<!-- FIXME: Que se ve en este gráfico? Muestra lo mismo que "DelayXFuente_Node5_P2C1"
-
-![Buffer node[0].lnk[0] y node[2].lnk[1] P2C1](./IMGs/Delay_2Buffers_comp_Node5_P2C1.png){width=850 height=auto}
-
--->
 
 #### Caso 2
 
@@ -488,6 +482,18 @@ La ventaja es que nuestro algoritmo trata de aprovecharlo y de esta forma son ma
 ---
 
 ## Conclusiones
+<!--
+En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red. 
+datarate = 1Mbps; delay = 100us;
+Network.node[{0, 2}].app.interArrivalTime = exponential(1)
+Network.node[{0, 2}].app.packetByteSize = 125000
+Network.node[{0, 2}].app.destination = 5 -->
+
+En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red.
+
+Nuestra hipotesis es que para que haya un equilibrio y estabilidad en la red, no se deben generar colas crecientes en los buferes _Generadores_ y _Conectores_
+
+interArrivalTime >= len(camino mas largo) * (packetByteSize / datarate)
 
 ### Comparación de resultados
 
