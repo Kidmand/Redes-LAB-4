@@ -334,7 +334,9 @@ Nuestro algoritmo en la etapa de enrutamiento de paquetes siempre viajaran por l
 Por lo tanto el flujo de paquetes seguirá estos caminos:
 
 > **Flujo de transmisión de paquetes**
+>
 > Node[2].lnk[1] (gen) --> Node[3].lnk[1] --> Node[4].lnk[1] --> Node[5] (sink).
+>
 > Node[0].lnk[0] (gen) --> Node[7].lnk[0] --> Node[6].lnk[0] --> Node[5] (sink).
 
 Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
@@ -407,13 +409,21 @@ Nuestro algoritmo en la etapa de enrutamiento de paquetes siempre viajaran por l
 Por lo tanto el flujo de paquetes seguirá estos caminos:
 
 > **Flujo de transmisión de paquetes**
+>
 > Node[0].lnk[0] (gen) --> Node[7].lnk[0] --> Node[6].lnk[0] --> Node[5] (sink).
+>
 > Node[7].lnk[0] (gen) --> Node[6].lnk[0] --> Node[5] (sink).
+>
 > Node[6].lnk[0] (gen) --> Node[5] (sink).
 >
+> .............................................................
+>
 > Node[1].lnk[1] (gen) --> Node[2].lnk[1] --> Node[3].lnk[1] --> Node[4].lnk[1] --> Node[5] (sink).
+>
 > Node[2].lnk[1] (gen) --> Node[3].lnk[1] --> Node[4].lnk[1] --> Node[5] (sink).
+>
 > Node[3].lnk[1] (gen) --> Node[4].lnk[1] --> Node[5] (sink).
+>
 > Node[4].lnk[1] (gen) --> Node[5] (sink).
 
 Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
