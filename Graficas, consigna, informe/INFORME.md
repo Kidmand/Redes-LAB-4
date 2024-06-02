@@ -508,7 +508,7 @@ _La llegada de los paquetes a destino_
 _El delay con el que llegan_
 ![Delay de los paquetes entregados al node 5 P2C4](./IMGs/DelayXFuente_Node5_P2C4.png){width=850 height=auto}
 
-Como podemos notar, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 a 302, hemos podido estabilizar la red. Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
+Como podemos notar, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 en el mejor caso a 302, hemos podido estabilizar la red. Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
 
 ### Comparación de resultados
 
