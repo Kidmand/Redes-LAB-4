@@ -43,8 +43,6 @@ Describir el estado del arte. (trabajos previos) ..."
 - Metodología de trabajo.
 -->
 
-<!-- FIXME: COMPLETAR ... -->
-
 ### Generalidades y definiciones
 
 <!-- Agregar definiciones generales, teoría para ya dar por sentada en ambas partes. -->
@@ -89,8 +87,6 @@ Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada
   - Explicar caso 1: su ventaja, problemas, que esperamos ver, etc.
   - Explicar caso 2: su ventaja, problemas, que esperamos ver, etc.
     -->
-
-<!-- FIXME: COMPLETAR ... -->
 
 #### Tipos de nodos en un flujo de datos
 
