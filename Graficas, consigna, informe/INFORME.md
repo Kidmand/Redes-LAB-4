@@ -491,9 +491,24 @@ Network.node[{0, 2}].app.destination = 5 -->
 
 En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red.
 
-Nuestra hipotesis es que para que haya un equilibrio y estabilidad en la red, no se deben generar colas crecientes en los buferes _Generadores_ y _Conectores_
+Nuestra hipotesis es que para que haya un equilibrio y estabilidad en la red, no se deben generar colas crecientes en los buferes _Generadores_ y _Conectores_. Para esto, una solucion es que el interArrivalTime sea tal que los paquetes se generen cada X tiempo, donde X seria el tiempo suficiente para que todos los paquetes anteriermente generados, sean entregados. De esta forma, la cantidad de paquetes circulando en la red volvera a 0 y el ciclo se repetira continuamente sin crecer.
 
-interArrivalTime >= len(camino mas largo) * (packetByteSize / datarate)
+El tiempo necesario para que todos los paquetes sean entregados es igual al camino mas largo en numero de enlaces entre un origen y destino multiplicado por la velocidad de transferencia a traves de esos enlaces.
+
+Por lo tanto, creemos que para que haya un equilibrio y estabilidad en la red, se debe respetar lo siguiente: interArrivalTime >= len(camino mas largo) * (packetByteSize / datarate)
+
+Para esto probamos con interArrivalTime = uniform(4, 4 + exponential(1)) consiguiendo el objetivo deseado.
+
+_Veamos la utilizacion de los buffers_
+![Buffers P2C4](./IMGs/Bufferes_P2C4.png){width=850 height=auto}
+
+_La llegada de los paquetes a destino_
+![Cantidad de paquetes llegados de cada fuente P2C4](./IMGs/CantidadXFuente_Node5_P2C4.png){width=400 height=auto}
+
+_El delay con el que llegan_
+![Delay de los paquetes entregados al node 5 P2C4](./IMGs/DelayXFuente_Node5_P2C4.png){width=850 height=auto}
+
+Como podemos notar, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 a 302, hemos podido estabilizar la red. Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
 
 ### Comparación de resultados
 
