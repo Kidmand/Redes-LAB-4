@@ -269,19 +269,19 @@ Nuestro algoritmo se divide en dos partes:
 1. **Obtención de información de la red.**
 2. **Enrutamiento de los paquetes.**
 
-En la primera parte (**obtención de información de la red**), nos enfocamos en obtener como esta conformada la red circular. Para ello, cada nodo independientemente genera paquetes para conseguirlo. Específicamente cada nodo genere dos paquetes:
+En la primera parte (**obtención de información de la red**), nos enfocamos en ver como esta conformada la red circular. Para ello, cada nodo independientemente genera paquetes para conseguirlo. Específicamente cada nodo genera dos paquetes:
 
-- Un paquete para obtener la longitud de la red.
+- **Un paquete para obtener la longitud de la red.**
   - Esto lo consigue con un paquete que tiene destino y origen en el mismo nodo que a su vez cuenta los saltos que da hasta llegar al final.
-- Un paquete para obtener la topología de la red con el nombre de cada nodo y su lugar en la circunferencia.
+- **Un paquete para obtener la topología de la red** con el nombre de cada nodo y su lugar en la circunferencia.
   - Sabiendo la longitud de la red N, este paquete tiene un arreglo [a1, a2, ... , aN] que también tiene como destino y origen el mismo nodo.
   - Este arreglo se va modificando en cada nodo que pasa, agregando el nombre del nodo en el que se encuentra.
 
-El echo que la red sea circular nos permite que los paquetes no se pierdan y que se pueda obtener la información de la red de forma correcta. Esto no es un dato menor, debido a que en nuestro algoritmo los paquetes que **no son para el nodo local** son enviados por la **interfaz contraria a la que llegaron**.
+El echo que la red sea circular nos permite que los paquetes no se pierdan y que se pueda obtener la información de la red de forma correcta. Esto no es un dato menor, debido a que en nuestro algoritmo, los paquetes que **no son para el nodo local** son enviados por la **interfaz contraria a la que llegaron**.
 
 En la segunda parte (**enrutamiento de los paquetes**), nos enfocamos en enviar los paquetes a su destino. Para ello, cada nodo recibe los paquetes desde su app y calcula la ruta más corta para llegar al destino.
 Esto lo consigue porque cada nodo tiene un arreglo con `[nombre_vecino1, nombre_vecino2, ... , nombre_vecinoN]`, tal que el `nombre_vecino1` es el nombre del **nodo que esta primero por la interfaz que se mando el paquete para obtener la topología** de la red. Supongamos que se mando por la **interfaz 0**, entonces el `nombre_vecinoN` es el nombre del nodo que esta primero por la **interfaz 1**. De esta forma podemos ver por cual interfaz nos conviene enviar el paquete. Si el destino del paquete esta en `[nombre_vecino1, nombre_vecino2, ... , nombre_vecino(N/2)]` (observar que miramos solo la mitad del arreglo) entonces se envía por la **interfaz 0**, sino por la **interfaz 1**.
-Luego como mencionamos antes como los paquetes que no son para el nodo local son enviados por la interfaz contraria a la que llegaron, si el paquete no es para el nodo local, se envía por la interfaz contraria a la que llego. De esta forma conseguimos que los paquetes lleguen a su destino por la ruta más corta en al red circular.
+Luego como mencionamos antes como los paquetes que no son para el nodo local son enviados por la interfaz contraria a la que llegaron, si el paquete no es para el nodo local, se envía por la interfaz contraria a la que llego. De esta forma conseguimos que los paquetes lleguen a su destino por la ruta más corta en la red circular.
 
 Queda una cosa pendiente, mientras estamos obteniendo información de la red, no podemos enviar paquetes "de datos". Por lo que decidimos que si un paquete llega mientras estamos obteniendo la topología de la red, lo guardamos en un buffer y lo enviamos cuando terminamos de obtener la topología.
 
@@ -304,9 +304,9 @@ De esta forma, podemos ver que para nuestro protocolo, establecimos que estos ti
 
 <!-- Como llegamos a esa idea. -->
 
-Esta idea surge primero, porque pensamos, _¿Que pasa si suponemos que cada nodo conoce la topología de la red?_. Si pasa esto es fácil ver que cada nodo puede calcular la ruta más corta para llegar a cualquier otro nodo debido a que la red es circular.
+Esta idea surge primero, porque pensamos, _¿Que pasa si suponemos que cada nodo conoce la topología de la red?_. Si sucede esto es fácil ver que cada nodo puede calcular la ruta más corta para llegar a cualquier otro nodo debido a que la red es circular.
 Por esta razón nos pusimos a pensar **como hacer que cada nodo conozca la topología de la red**. Lo primero que notamos fue que es muy fácil que un paquete recorra toda la red y que llegue nuevamente a donde empezó y lo mejor es que la forma de recorrerlo es siempre en orden. Por esto llegamos a la idea de que **si un paquete llega por una interfaz entonces se envía por la contraria**.
-Nos faltaba tener la topología de la red, lo primero que pensamos si ya tenemos una forma de enviar un paquete que pasa por todos en orden y llega nuevamente a su origen, entonces podemos hacer que **cada nodo genere un paquete que recorre toda la red en donde todos los otros nodos agregue su nombre a una lista** y que esta lista llegue al final a su origen. De esta forma podemos obtener la topología de la red. Pero **una lista en un paquete nos pareció muy poco eficiente y realista**, por ello preferimos usar un arreglo, **pero para usar un arreglo antes debemos definir su tamaño**, asi se nos ocurrió que si cada nodo primero genere un paquete que cuenta los saltos que da hasta llegar al final, entonces finalmente podemos saber la longitud de la red y por lo tanto el tamaño del arreglo. De esta forma conseguimos la topología de la red con un arreglo que recorre toda la red, cada nodo agrega su nombre y llega nuevamente a su origen.
+Nos faltaba tener la topología de la red, lo primero que pensamos, es que si ya tenemos una forma de enviar un paquete que pasa por todos en orden y llega nuevamente a su origen, entonces podemos hacer que **cada nodo genere un paquete que recorre toda la red en donde todos los otros nodos agregue su nombre a una lista** y que esta lista llegue al final a su origen. De esta forma podemos obtener la topología de la red. Pero **una lista en un paquete nos pareció muy poco eficiente y realista**, por ello preferimos usar un arreglo, **pero para usar un arreglo antes debemos definir su tamaño**, asi se nos ocurrió que si cada nodo primero genere un paquete que cuenta los saltos que da hasta llegar al final, entonces finalmente podemos saber la longitud de la red y por lo tanto el tamaño del arreglo. De esta forma conseguimos la topología de la red con un arreglo que recorre toda la red, cada nodo agrega su nombre y llega nuevamente a su origen.
 
 #### Hipótesis de porque creemos que va a funcionar
 
@@ -378,22 +378,22 @@ _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 ![Cantidad de paquetes llegados de cada fuente P2C1](./IMGs/CantidadXFuente_Node5_P2C1.png){width=400 height=auto}
 
 Lo primero que podemos notar es que el máximo de paquetes que llegan al node[5] es mayor al que en la **Parte1**, esto es justamente porque cada nodo _Generador_ envía paquetes por su ruta más corta y encima estas rutas no se superponen, generando que se utilice la red en su maxima capacidad.
-Pero igualmente podemos notar una leve diferencia entre los paquetes que llegan desde el node[2] y el node[0], esto es debido a que el node[0], la diferencia es insignificante, esto es generado por como las app de los nodos generan los paquetes.
+Pero igualmente podemos notar una leve diferencia entre los paquetes que llegan desde el node[2] y el node[0], aunque esta es insignificante y es generado por como las app de los nodos generan los paquetes.
 
 _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al node[5]._
 
 ![Delay de los paquetes entregados al node 5 P2C1](./IMGs/DelayXFuente_Node5_P2C1.png){width=850 height=auto}
 
 Podemos ver que el delay de los paquetes que llegan al node[5] copia el comportamiento de la utilización de los buffers de los nodos _Generadores_ {2,0}. Esto es debido a que el único buffer en donde los paquetes se almacenan por cierto tiempo es en el buffer de los nodos _Generadores_ {2,0}. En los demás nodos, los paquetes llegan y se envían inmediatamente.
-Por lo que el delay de los paquetes que llegan al node[5] es directamente proporcional a la utilización de los buffers de los nodos _Generadores_ {2,0}.
+Por lo que el delay de los paquetes que llegan al node[5] es directamente proporcional a la utilización de los buffers de los nodos _Generadores_ {2,0} para este caso de estudio.
 
 _En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
 
 ![Numero de saltos de paquetes entregados al node 5 P2C1](./IMGs/SaltosXFuente_Node5_P2C1.png){width=850 height=auto}
 
-Claramente podemos ver como ya habíamos mostrado al inicio de este análisis, **las rutas tienen la misma cantidad de saltos que la red porque justo los caminos mas cortos coinciden en esto** (esto es particular del caso1). Las rutas mas cortas son con 3 saltos, por lo que todos los paquetes llegan con 3 saltos y no pueden llegar con menos.
+Claramente podemos ver como ya habíamos mostrado al inicio de este análisis, **las rutas tienen la misma cantidad de saltos que la red porque justo los caminos más cortos coinciden en esto** (esto es particular del caso1). Las rutas mas cortas son con 3 saltos, por lo que todos los paquetes llegan con 3 saltos y no pueden llegar con menos.
 
-<!-- FIXME: Que se ve en este gráfico? Creo que muestra lo mismo que "DelayXFuente_Node5_P2C1"
+<!-- FIXME: Que se ve en este gráfico? Muestra lo mismo que "DelayXFuente_Node5_P2C1"
 
 ![Buffer node[0].lnk[0] y node[2].lnk[1] P2C1](./IMGs/Delay_2Buffers_comp_Node5_P2C1.png){width=850 height=auto}
 
@@ -438,14 +438,16 @@ _¿Cómo afecta al buffer de cada nodo esta distribución?_
 En este gráfico podemos notar lo siguiente:
 
 - Primero podemos notar como los nodos _Generadores_ {0,1}, solo utilizan sus buffers `lnk[0]` o `lnk[1]` según correspondan y no le llegan paquetes de la otra interfaz. Esto genera principalmente que la utilización de sus buffers unicamente dependa de como le llegan los paquetes de su app. Por ello podemos ver como la utilización de sus buffers coinciden con `exponential(1)`.
-- Luego como el resto de nodos _Generadores_ {2,3,4,6,7} utilizan sus buffers `lnk[1]` o `lnk[0]` según sus rutas. Pero a diferencia de los nodos _Generadores_ {0,1}, estos nodos también reciben paquetes de la otra interfaz. Esto sumado a que ademas generan paquetes y los envían más lento de lo que les llegan, produce que la utilización de sus buffers crezca sin parar en el tiempo. Sumado a esto, podemos ver como los nodos {4,6} crecen mas rápido que los nodos {2,3,7} esto es debido a que ellos están mas cerca del nodo {5}. Es importante todo este punto porque las capacidades de los buffers son finito y a la larga se llenarán, entonces se podrían perder paquetes.
+- Luego como el resto de nodos _Generadores_ {2,3,4,6,7} utilizan sus buffers `lnk[1]` o `lnk[0]` según sus rutas. Pero a diferencia de los nodos _Generadores_ {0,1}, estos nodos también reciben paquetes de la otra interfaz. Ademas generan paquetes y los envían más lento de lo que les llegan, produciendo que la utilización de sus buffers crezca sin parar en el tiempo. Sumado a esto, podemos ver como los nodos {4,6} crecen más rápido que los nodos {2,3,7} esto es debido a que ellos están mas cerca del nodo {5}.
+  Es importante este punto porque las capacidades de los buffers son finitas y a la larga se llenarán, entonces se podrían perder paquetes (esto no pasa en nuestra simulación).
 - Por otra parte podemos ver como el nodo _Consumidor_ {5} no utiliza su buffer (aunque se ve movimiento en su `lnk[0]`, ignorarlo por ahora), esto es debido a que los paquetes que le llegan son enviados directamente a su app, por lo que no se almacenan en el buffer.
 - Finalmente podemos ver como los nodos que envían paquetes de datos por `lnk[1]` (y el nodo _Consumidor_ {5}), sus buffers en `lnk[0]` tienen una utilización muy baja al principio de la simulación, esto es debido a la primera parte de obtener la información de la red. Pero luego de esto, no se utilizan. Notar que esto pasa en todos los nodos pero no se llega a ver en el resto de nodos porque es insignificante esta utilización.
-- _En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
+
+_En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
 
 ![Numero de saltos de paquetes entregados al node 5 P2C2](./IMGs/SaltosXFuente_Node5_P2C2.png){width=850 height=auto}
 
-En este gráfico se muy claro que justamente cada nodo esta eligiendo la ruta más corta para llegar al `nodo[5]`. Por lo que podemos ver como los paquetes producidos por cada nodo llegan con la menor cantidad de saltos posibles. Uno de nuestros objetivos en el diseño de nuestro algoritmo.
+En este gráfico se muy claro que justamente cada nodo esta eligiendo la ruta más corta para llegar al `nodo[5]`. Por lo que podemos ver como los paquetes producidos por cada nodo llegan con la menor cantidad de saltos posibles. Esto fue uno de nuestros objetivos en el diseño de nuestro algoritmo.
 Vemos la distancia (en cantidad de saltos hasta llegar) de cada nodo al nodo[5] en una tabla:
 
 | Nodo        | Distancia |
@@ -463,14 +465,15 @@ _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
 ![Cantidad de paquetes llegados de cada fuente P2C2](./IMGs/CantidadXFuente_Node5_P2C2.png){width=400 height=auto}
 
-En la gráfica se ve una clara relación con el cuadro anterior. Podemos ver como los nodos que forman el camino `nodo[1] --> nodo[2] --> nodo[3] --> nodo[4] --> nodo[5]` y `nodo[0] --> nodo[7] --> nodo[6] --> nodo[5]`, exactamente este orden esta relacionado con la cantidad de paquetes que llegan al destino. Esto justamente se debe justamente a la distancia que recorren los paquetes para llegar al `nodo[5]`. A mayor distancia, menos paquetes llegan porque hay más nodos por los que pasar, los cuales también tienen su app generando paquetes.
-Un detalle, es que el `nodo[4]` envía menos paquetes que el `nodo[6]` y ambos se encuentran a la misma distancia del `nodo[5]`. Esto se debe a que el `nodo[4]` tiene mas nodos anteriores que le envían paquetes por lo tanto su buffer se llena más rápido y le deja menos prioridad a los paquetes de su app. Exactamente sucede porque el `nodo[4]` tiene 3 nodos anteriores que le envían paquetes y el `nodo[6]` solo 2.
+En la gráfica se ve una clara relación con el cuadro anterior. Podemos ver como los nodos que forman el camino `nodo[1] --> nodo[2] --> nodo[3] --> nodo[4] --> nodo[5]` y `nodo[0] --> nodo[7] --> nodo[6] --> nodo[5]` y como exactamente este orden esta relacionado con la cantidad de paquetes que llegan al destino. Esto justamente se debe a la distancia que recorren los paquetes para llegar al `nodo[5]`. A mayor distancia, menos paquetes llegan porque hay más nodos por los que pasar, los cuales también tienen su app generando paquetes.
+Un detalle, es que el `nodo[4]` envía menos paquetes que el `nodo[6]` y ambos se encuentran a la misma distancia del `nodo[5]`. Esto se debe a que el `nodo[4]` tiene más nodos anteriores que le envían paquetes por lo tanto su buffer se llena más rápido y le deja menos prioridad a los paquetes de su app. Exactamente sucede porque el `nodo[4]` tiene 3 nodos anteriores que le envían paquetes y el `nodo[6]` solo 2. Luego un comportamiento similar sucede con el resto de los nodos que están a la misma distancia del `nodo[5]` pero en el otro camino.
 
 _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al node[5]._
 
 ![Delay de los paquetes entregados al node 5 P2C2](./IMGs/DelayXFuente_Node5_P2C2.png){width=850 height=auto}
 
-<!-- FIXME: COMPLETAR ... -->
+En esta gráfica podemos ver como el _delay_ de los paquetes que llegan al `nodo[5]` es directamente proporcional a la distancia que recorren los paquetes para llegar al `nodo[5]`. A mayor distancia, mayor delay. Esto sucede porque los paquetes deben pasar por más nodos antes de llegar al `nodo[5]`.
+La ventaja es que nuestro algoritmo trata de aprovecharlo y de esta forma son mas los paquetes que llegan con un menor _delay_ respecto a la **Parte1** porque justamente se elige la ruta más corta.
 
 ---
 
