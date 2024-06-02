@@ -36,10 +36,10 @@ Finalmente, se compararán los resultados obtenidos en ambas partes y se sacará
 
 ## Introducción
 
-<!--
+<!-- TODO:
 Describir el estado del arte. (trabajos previos) ..."
 -->
-<!--
+<!--TODO:
 - Metodología de trabajo.
 -->
 
@@ -116,7 +116,6 @@ Cada paquete que recibe un nodo enrutador es evaluado para determinar si el nodo
 
 <!-- Gráficos y análisis de los mismos
 estudiar las métricas tomadas. ¿Qué métricas se obtienen? ¿Cómo es el uso de los recursos de la red? ¿Se puede mejorar?
-En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red. Justifique.
 -->
 
 #### Caso 1
@@ -320,7 +319,6 @@ Por otro lado, la etapa de enrutamiento de los paquetes es también simple y efe
 estudiar las métricas tomadas. ¿Qué métricas se obtienen? ¿Cómo es el uso de los recursos de la red? ¿Se puede mejorar?
 ¿Hay loops de enrutamiento? Más allá de lo que llegó
 a implementar en el simulador, ¿Ve alguna manera de mejorar más aún su diseño?
-En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red. Justifique.
 -->
 
 #### Caso 1
@@ -481,15 +479,10 @@ La ventaja es que nuestro algoritmo trata de aprovecharlo y de esta forma son ma
 
 ---
 
-## Conclusiones
+## A partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red en el caso 2?
 <!--
-En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red. 
-datarate = 1Mbps; delay = 100us;
-Network.node[{0, 2}].app.interArrivalTime = exponential(1)
-Network.node[{0, 2}].app.packetByteSize = 125000
-Network.node[{0, 2}].app.destination = 5 -->
-
-En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red.
+En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red.  
+-->
 
 Nuestra hipotesis es que para que haya un equilibrio y estabilidad en la red, no se deben generar colas crecientes en los buferes _Generadores_ y _Conectores_. Para esto, una solucion es que el interArrivalTime sea tal que los paquetes se generen cada X tiempo, donde X seria el tiempo suficiente para que todos los paquetes anteriermente generados, sean entregados. De esta forma, la cantidad de paquetes circulando en la red volvera a 0 y el ciclo se repetira continuamente sin crecer.
 
@@ -499,7 +492,14 @@ Por lo tanto, creemos que para que haya un equilibrio y estabilidad en la red, s
 
 Para esto probamos con interArrivalTime = uniform(4, 4 + exponential(1)) consiguiendo el objetivo deseado.
 
-_Veamos la utilizacion de los buffers_
+Para comprobarlo, veamos los efectos de la siguiente configuracion en la parte 2:
+
+- datarate = 1Mbps;
+- Network.node[{0, 1, 2, 3, 4, 6, 7}].app.interArrivalTime = uniform(4, 4 + exponential(1))
+- Network.node[{0, 1, 2, 3, 4, 6, 7}].app.packetByteSize = 125000
+- Network.node[{0, 1, 2, 3, 4, 6, 7}].app.destination = 5
+
+_La utilizacion de los buffers_
 ![Buffers P2C4](./IMGs/Bufferes_P2C4.png){width=850 height=auto}
 
 _La llegada de los paquetes a destino_
@@ -508,21 +508,24 @@ _La llegada de los paquetes a destino_
 _El delay con el que llegan_
 ![Delay de los paquetes entregados al node 5 P2C4](./IMGs/DelayXFuente_Node5_P2C4.png){width=850 height=auto}
 
-Como podemos notar, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 en el mejor caso a 302, hemos podido estabilizar la red. Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
+Como podemos ver, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 en el mejor caso a 302, hemos podido estabilizar la red.
+Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
+
+## Conclusiones
 
 ### Comparación de resultados
 
-<!-- Comparar gráficos de ambas partes. solo poner los gráficos si hay algo que comparar o recordar.
+<!-- TODO:
+Comparar gráficos de ambas partes. solo poner los gráficos si hay algo que comparar o recordar.
 Evalúe y compare su estrategia con los casos 1 y 2 de la tarea de análisis . ¿Cuánto4
 mejoran las métricas? ¿Por qué?
 -->
-<!-- FIXME: COMPLETAR ... -->
 
 ### Discusiones
 
-<!-- cualquier cosa que no entre en la comparación de resultados va aca, ej: posibles mejoras, obs,conclusiones, ... -->
-
-<!-- FIXME: COMPLETAR ... -->
+<!-- TODO:
+cualquier cosa que no entre en la comparación de resultados va aca, ej: posibles mejoras, obs,conclusiones, ... 
+-->
 
 ---
 
