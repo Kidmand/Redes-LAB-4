@@ -500,13 +500,13 @@ Para comprobarlo, veamos los efectos de la siguiente configuracion en la parte 2
 - Network.node[{0, 1, 2, 3, 4, 6, 7}].app.destination = 5
 
 _La utilizacion de los buffers_
-![Buffers P2C4](./IMGs/Bufferes_P2C4.png){width=850 height=auto}
+![Buffers P2C5](./IMGs/Bufferes_P2C5.png){width=850 height=auto}
 
 _La llegada de los paquetes a destino_
-![Cantidad de paquetes llegados de cada fuente P2C4](./IMGs/CantidadXFuente_Node5_P2C4.png){width=400 height=auto}
+![Cantidad de paquetes llegados de cada fuente P2C5](./IMGs/CantidadXFuente_Node5_P2C5.png){width=400 height=auto}
 
 _El delay con el que llegan_
-![Delay de los paquetes entregados al node 5 P2C4](./IMGs/DelayXFuente_Node5_P2C4.png){width=850 height=auto}
+![Delay de los paquetes entregados al node 5 P2C5](./IMGs/DelayXFuente_Node5_P2C5.png){width=850 height=auto}
 
 Como podemos ver, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 en el mejor caso a 302, hemos podido estabilizar la red.
 Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
