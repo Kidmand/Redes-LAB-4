@@ -11,13 +11,13 @@
 ### Resumen del trabajo
 
 En este trabajo analizaremos el rol de la capa de red, que deberá decidir por qué interface enviar los paquetes que le llegan ya sea desde la capa de aplicación superior o desde las capas de enlaces inferiores.
-Nos enfrentaremos a el problema de enrutar el tráfico que confluye desde los módulos por múltiples entradas y salidas, utilizando un algoritmo simple (dado por la cátedra) y otro mas complejo con el fin de comparar sus diferentes efectos.
+Nos enfrentaremos a el problema de enrutar el tráfico que confluye desde los módulos por múltiples entradas y salidas, utilizando un algoritmo simple (dado por la cátedra) y otro más complejo con el fin de comparar sus diferentes efectos.
 Para ello tomaremos estadísticas y probaremos diferentes casos con ambos algoritmos de enrutamiento para ver su influencia utilizando la herramienta de simulación de eventos discretos Omnet++, bajo el lenguaje c++.
 
 ## Estructura del informe
 
 <!-- Explicar como se estructurara el informe brevemente -->
-<!-- Presentar brevemente la estructura del informe. Dar algunos detalles mas del proyecto.
+<!-- Presentar brevemente la estructura del informe. Dar algunos detalles más del proyecto.
 Introducir que vamos a dividir el informe en dos partes y que luego las compararemos.
 -->
 
@@ -35,13 +35,6 @@ Finalmente, se compararán los resultados obtenidos en ambas partes y se sacará
 ---
 
 ## Introducción
-
-<!-- TODO:
-Describir el estado del arte. (trabajos previos) ..."
--->
-<!--TODO:
-- Metodología de trabajo.
--->
 
 ### Generalidades y definiciones
 
@@ -67,7 +60,7 @@ La red consta de 8 nodos conectados en forma de anillo, cada uno con dos interfa
 
 Internamente, cada nodo cuenta con dos capas de enlace (link o lnk, una con cada vecino), una capa de red (net) y una capa de aplicación (app). La capa de aplicación y la capa de enlace implementan generadores de tráfico y buffers respectivamente.
 
-La app genera el trafico segun los siguientes parametros:
+La app genera el trafico según los siguientes parámetros:
 
 - _interArrivalTime_: Velocidad con la que se generan los paquetes desde la app del nodo.
 - _packetByteSize_: Tamaño de los paquetes de datos generados desde la app.
@@ -75,11 +68,13 @@ La app genera el trafico segun los siguientes parametros:
 ![Topología Red Anillo](./IMGs/Topologia_Red_Anillo.png){width=500 height=auto}
 
 #### Problemáticas
+
 <!--
 - Definir el problema.
   + "Nosotros en las redes vamos a encontrar tal y tal problema ..."
 -->
-Nosotros en la capa de red, en el enrutamiento de los paquetes nos enfrentamos al problema de maximizar la eficiencia con la que llegan a su destino. Para conseguir esto hay muchas estrategias, cada una mas apta dependiendo la topología y cantidad de interfaces por nodo, y nuestro objetivo es encontar la mas apta en nuestro caso consiguiendo una eficiencia aceptable.
+
+Nosotros en la capa de red, en el enrutamiento de los paquetes nos enfrentamos al problema de maximizar la eficiencia con la que llegan a su destino. Para conseguir esto hay muchas estrategias, cada una más apta dependiendo la topología y cantidad de interfaces por nodo, y nuestro objetivo es encontrar la más apta en nuestro caso consiguiendo una eficiencia aceptable.
 
 #### Casos de estudio
 
@@ -135,6 +130,10 @@ Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 - _Nodos Conectores:_ {1,0,7,6}
 - _Nodos No utilizados:_ {3,4}
 
+Aca podemos ver un gif de como se envían los paquetes por la red en este caso:
+
+<img src="./GIFs/parte1-caso1-r.gif" width="300" alt="GIF de enrutamiento en PART1-CASO1">
+
 _¿Cómo afecta al buffer de cada nodo esta distribución?_
 
 ![Buffers P1C1](./IMGs/Bufferes_P1C1.png){width=850 height=auto}
@@ -151,22 +150,22 @@ En el gráfico podemos notar lo siguiente:
   Esto se explica debido a que hay un tiempo de transmisión de los paquetes, por lo que se requiere guardarlos en un buffer. Pero la velocidad de transmisión de los paquetes no es menor a la velocidad con la que llegan, por lo tanto no crece la utilización de sus buffers con el tiempo manteniéndose en un rango constante entre 1 y 0.
 
 - El nodo _Generador_ no _Conector_ node[2] tiene una mayor y variante utilización de su buffer.
-  Que utilice mas su buffer es debido a que recibe paquetes a una velocidad mayor de la que los puede transmitir.
+  Que utilice más su buffer es debido a que recibe paquetes a una velocidad mayor de la que los puede transmitir.
   La variabilidad de la utilización de su buffer se explica a su vez porque los paquetes los recibe desde su app, la cual no le envía paquetes de forma constante.
 
-- Por ultimo, el nodo _Generador_ y _Conector_ node[0] es el que mas utilización tiene de su buffer.
+- Por ultimo, el nodo _Generador_ y _Conector_ node[0] es el que más utilización tiene de su buffer.
   Esto es causado por dos factores. El primero es que recibe paquetes de forma contante al igual que los demás nodos _Conectores_ por lo que no tiene "descanso" digamos. Luego, también recibe paquetes de su app al ser también un nodo _Generador_ lo que causa que a momentos se le envié una mayor cantidad de paquetes.
   Ambos factores causan que la velocidad con la que le llegan paquetes sea constantemente mayor a la velocidad con la que los puede enviar. Por esta razón podemos ver una utilización constantemente al alza de su buffer; con ciertas micro variaciones que vendrían a ser, como en el caso del node[2], gracias al envió variable de su app.
 
-El principal objetivo de toda red es que los paquetes lleguen desde su origen a su destino, por lo tanto, veamos mas profundamente la llegada de paquetes de los _Generadores_ {2,0} al _Consumidor_ node[5].
+El principal objetivo de toda red es que los paquetes lleguen desde su origen a su destino, por lo tanto, veamos más profundamente la llegada de paquetes de los _Generadores_ {2,0} al _Consumidor_ node[5].
 
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
 ![Cantidad de paquetes llegados de cada fuente P1C1](./IMGs/CantidadXFuente_Node5_P1C1.png){width=400 height=auto}
 
-Podemos notar que llegan paquetes de ambos nodos _Generadores_ pero con una diferencia, llegan mas del node[0].
+Podemos notar que llegan paquetes de ambos nodos _Generadores_ pero con una diferencia, llegan más del node[0].
 
-Esto se debe al hecho de estar el node[0] mas cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del node[0] en promedio ya que los del node[2] no solo se empiezan a enviar de mas lejos, sino que deben competir el espacio del buffer en el node[0] con los paquetes que se generan ahi mismo.
+Esto se debe al hecho de estar el node[0] más cerca del destino y en el camino entre el nodo 2 y 5. Esto hace que primero lleguen los paquetes del node[0] en promedio ya que los del node[2] no solo se empiezan a enviar de más lejos, sino que deben competir el espacio del buffer en el node[0] con los paquetes que se generan ahi mismo.
 
 _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al node[5]._
 
@@ -174,19 +173,19 @@ _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al
 
 En este gráfico podemos notar:
 
-- _Llegan mas paquetes del node[0]_: Esto coincide con lo dicho antes del gráfico.
-- _El delay va aumentando_: Esto esta directamente relacionado por el aumento lineal del buffer del node[0] ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
-- _El delay del node[2] es generalmente mayor al del node[0]_: Esto se debe a que los paquetes enviados desde el node[2] vienen de mas lejos que los del node[0], por lo que tardan mas tiempo.
+- _Llegan más paquetes del node[0]_: Esto coincide con lo dicho antes del gráfico.
+- _El delay va aumentando_: Esto esta directamente relacionado por el aumento lineal del buffer del node[0] ya que al haber cada vez más paquetes en cola, cada vez tardaran más tiempo en llegar.
+- _El delay del node[2] es generalmente mayor al del node[0]_: Esto se debe a que los paquetes enviados desde el node[2] vienen de más lejos que los del node[0], por lo que tardan más tiempo.
 
 _En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
 
 ![Numero de saltos de paquetes entregados al node 5 P1C1](./IMGs/SaltosXFuente_Node5_P1C1.png){width=850 height=auto}
 
 En este gráfico podemos observar como la distancia en saltos recorrida por los paquetes de node[2] es mayor a los del node[0].
-Como hemos dicho anteriormente, el node[0] esta mas cerca y de ahi la menor distancia.
+Como hemos dicho anteriormente, el node[0] esta más cerca y de ahi la menor distancia.
 Por lo que podemos concluir que el aumento de la distancia que recorren los paquetes es:
 
-- Proporcional al aumento del delay con el que llegan a destino. Cuanto mas recorren, mas delay tendrán en llegar.
+- Proporcional al aumento del delay con el que llegan a destino. Cuanto más recorren, más delay tendrán en llegar.
 - Inversamente proporcional al aumento de la cantidad de paquetes que llegan a destino.
 
 #### Caso 2
@@ -206,6 +205,10 @@ Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 - _Nodos Conectores:_ {0,1,2,3,6,7}
 - _Nodos No utilizados:_ {}
 
+Aca podemos ver un gif de como se envían los paquetes por la red en este caso:
+
+<img src="./GIFs/parte1-caso2-r.gif" width="300" alt="GIF de enrutamiento en PART1-CASO2">
+
 _¿Cómo afecta al buffer de cada nodo esta distribución?_
 
 ![Buffers P1C2](./IMGs/Bufferes_P1C2.png){width=850 height=auto}
@@ -220,11 +223,11 @@ _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
 ![Cantidad de paquetes llegados de cada fuente P1C2](./IMGs/CantidadXFuente_Node5_P1C2.png){width=400 height=auto}
 
-Podemos notar que llegan paquetes de todos los nodos _Generadores_ pero con una diferencia, llegan mas de los nodos mas cercanos en el flujo de transmisión de los paquetes.
+Podemos notar que llegan paquetes de todos los nodos _Generadores_ pero con una diferencia, llegan más de los nodos más cercanos en el flujo de transmisión de los paquetes.
 
-Primero llegan los paquetes de los generadores mas cercanos en promedio ya que los demás no solo se empiezan a enviar de mas lejos, sino que deben competir por el espacio del buffer en los nodos _Conectores_ intermedios contra los paquetes que se generan ahi mismo.
+Primero llegan los paquetes de los generadores más cercanos en promedio ya que los demás no solo se empiezan a enviar de más lejos, sino que deben competir por el espacio del buffer en los nodos _Conectores_ intermedios contra los paquetes que se generan ahi mismo.
 
-Por lo tanto, los paquetes que vienen de mas lejos se irán quedando rezagados por cada nodo generador por el que pasen. Por esta razón es que podemos ver como casi no llegan paquetes de los últimos generadores.
+Por lo tanto, los paquetes que vienen de más lejos se irán quedando rezagados por cada nodo generador por el que pasen. Por esta razón es que podemos ver como casi no llegan paquetes de los últimos generadores.
 
 Luego, podemos notar que a diferencia del caso 1, la diferencia entre los datos es mayor, casi como si se redujera a la mitad. Esto es debido a que cuando llegan paquetes a un generador de otro nodo, este debe no solo enviar sus paquetes, también el de los demás.
 
@@ -234,18 +237,18 @@ _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al
 
 En este gráfico podemos notar:
 
-- _Llegan mas paquetes de los nodos mas cercanos_: Esto coincide con lo dicho antes del gráfico.
-- _El delay va aumentando_: Esto esta directamente relacionado por el aumento lineal del buffer de los nodos _Generadores_ y _Conectores_ {0,1,2,3,6,7} ya que al haber cada vez mas paquetes en cola, cada vez tardaran mas tiempo en llegar.
-- _El delay de los nodos mas lejanos es generalmente mayor al de los mas cercanos_: Esto se debe a que los paquetes enviados desde mas lejos están a una mayor distancia y deben pasar por mas colas por lo que tardan mas tiempo.
+- _Llegan más paquetes de los nodos más cercanos_: Esto coincide con lo dicho antes del gráfico.
+- _El delay va aumentando_: Esto esta directamente relacionado por el aumento lineal del buffer de los nodos _Generadores_ y _Conectores_ {0,1,2,3,6,7} ya que al haber cada vez más paquetes en cola, cada vez tardaran más tiempo en llegar.
+- _El delay de los nodos más lejanos es generalmente mayor al de los más cercanos_: Esto se debe a que los paquetes enviados desde más lejos están a una mayor distancia y deben pasar por más colas por lo que tardan más tiempo.
 
 _En el siguiente gráfico podemos ver una representación visual de las distancias recorridas por los paquetes desde su origen a su destino._
 
 ![Numero de saltos de paquetes entregados al node 5 P1C2](./IMGs/SaltosXFuente_Node5_P1C2.png){width=850 height=auto}
 
-En este gráfico podemos observar como la distancia en saltos recorrida por los paquetes de los paquetes de los nodos mas alejados, el flujo es mayor a los mas cercanos.
+En este gráfico podemos observar como la distancia en saltos recorrida por los paquetes de los paquetes de los nodos más alejados, el flujo es mayor a los más cercanos.
 Por lo que podemos concluir que el aumento de la distancia que recorren los paquetes es:
 
-- Proporcional al aumento del delay con el que llegan a destino. Cuanto mas recorren, mas delay tendrán en llegar. (recordar que también vimos que influye la situación en los buffers de los nodos _Conectores_ por los que pasa)
+- Proporcional al aumento del delay con el que llegan a destino. Cuanto más recorren, más delay tendrán en llegar. (recordar que también vimos que influye la situación en los buffers de los nodos _Conectores_ por los que pasa)
 - Inversamente proporcional al aumento de la cantidad de paquetes que llegan a destino. (nuevamente, vimos que ademas influye que se vayan rezagando los paquetes)
 
 ---
@@ -341,7 +344,7 @@ Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 - _Nodos Conectores:_ {3,4,7,6}
 - _Nodos No utilizados:_ {1}
 
-Aca podemos ver como se envían los paquetes "de datos" por la red de nuestra simulación:
+Aca podemos ver un gif de como se envían los paquetes "de datos" por la red de nuestra simulación:
 
 <img src="./GIFs/parte2-caso1-solo-pkt-datos-r.gif" width="300" alt="GIF de enrutamiento en PART2-CASO1">
 
@@ -368,7 +371,7 @@ En este gráfico podemos notar lo siguiente:
 
 > OBS: Notar algo muy bueno, esa etapa de **obtener la información de la red** solo tarda 0.0032 segundos, lo que es muy poco tiempo.
 
-Como en la **Parte1** el principal objetivo de toda red es que los paquetes lleguen desde su origen a su destino, por lo tanto, veamos mas profundamente la llegada de paquetes de los _Generadores_ {2,0} al _Consumidor_ node[5].
+Como en la **Parte1** el principal objetivo de toda red es que los paquetes lleguen desde su origen a su destino, por lo tanto, veamos más profundamente la llegada de paquetes de los _Generadores_ {2,0} al _Consumidor_ node[5].
 
 _¿Cuantos paquetes de cada generador llegan al destino node[5]?_
 
@@ -391,7 +394,7 @@ _En el siguiente gráfico podemos ver una representación visual de las distanci
 
 ![Numero de saltos de paquetes entregados al node 5 P2C1](./IMGs/SaltosXFuente_Node5_P2C1.png){width=850 height=auto}
 
-Claramente podemos ver como ya habíamos mostrado al inicio de este análisis, **las rutas tienen la misma cantidad de saltos que la red porque justo los caminos más cortos coinciden en esto** (esto es particular del caso1). Las rutas mas cortas son con 3 saltos, por lo que todos los paquetes llegan con 3 saltos y no pueden llegar con menos.
+Claramente podemos ver como ya habíamos mostrado al inicio de este análisis, **las rutas tienen la misma cantidad de saltos que la red porque justo los caminos más cortos coinciden en esto** (esto es particular del caso1). Las rutas más cortas son con 3 saltos, por lo que todos los paquetes llegan con 3 saltos y no pueden llegar con menos.
 
 #### Caso 2
 
@@ -425,7 +428,7 @@ Sabiendo esto podemos categorizar a los nodos de la siguiente forma:
 - _Nodos Conectores:_ {2,3,4,6,7}
 - _Nodos No utilizados:_ {}
 
-Aca podemos ver como se envían los paquetes "de datos" por la red de nuestra simulación:
+Aca podemos ver un gif de como se envían los paquetes "de datos" por la red de nuestra simulación:
 
 <img src="./GIFs/parte2-caso2-solo-pkt-datos-r.gif" width="300" alt="GIF de enrutamiento en PART2-CASO1">
 
@@ -440,7 +443,7 @@ _¿Cómo afecta al buffer de cada nodo esta distribución?_
 En este gráfico podemos notar lo siguiente:
 
 - Primero podemos notar como los nodos _Generadores_ {0,1}, solo utilizan sus buffers `lnk[0]` o `lnk[1]` según correspondan y no le llegan paquetes de la otra interfaz. Esto genera principalmente que la utilización de sus buffers unicamente dependa de como le llegan los paquetes de su app. Por ello podemos ver como la utilización de sus buffers coinciden con `exponential(1)`.
-- Luego como el resto de nodos _Generadores_ {2,3,4,6,7} utilizan sus buffers `lnk[1]` o `lnk[0]` según sus rutas. Pero a diferencia de los nodos _Generadores_ {0,1}, estos nodos también reciben paquetes de la otra interfaz. Ademas generan paquetes y los envían más lento de lo que les llegan, produciendo que la utilización de sus buffers crezca sin parar en el tiempo. Sumado a esto, podemos ver como los nodos {4,6} crecen más rápido que los nodos {2,3,7} esto es debido a que ellos están mas cerca del nodo {5}.
+- Luego como el resto de nodos _Generadores_ {2,3,4,6,7} utilizan sus buffers `lnk[1]` o `lnk[0]` según sus rutas. Pero a diferencia de los nodos _Generadores_ {0,1}, estos nodos también reciben paquetes de la otra interfaz. Ademas generan paquetes y los envían más lento de lo que les llegan, produciendo que la utilización de sus buffers crezca sin parar en el tiempo. Sumado a esto, podemos ver como los nodos {4,6} crecen más rápido que los nodos {2,3,7} esto es debido a que ellos están más cerca del nodo {5}.
   Es importante este punto porque las capacidades de los buffers son finitas y a la larga se llenarán, entonces se podrían perder paquetes (esto no pasa en nuestra simulación).
 - Por otra parte podemos ver como el nodo _Consumidor_ {5} no utiliza su buffer (aunque se ve movimiento en su `lnk[0]`, ignorarlo por ahora), esto es debido a que los paquetes que le llegan son enviados directamente a su app, por lo que no se almacenan en el buffer.
 - Finalmente podemos ver como los nodos que envían paquetes de datos por `lnk[1]` (y el nodo _Consumidor_ {5}), sus buffers en `lnk[0]` tienen una utilización muy baja al principio de la simulación, esto es debido a la primera parte de obtener la información de la red. Pero luego de esto, no se utilizan. Notar que esto pasa en todos los nodos pero no se llega a ver en el resto de nodos porque es insignificante esta utilización.
@@ -475,31 +478,32 @@ _En el siguiente gráfico podemos ver el delay con el que llegan los paquetes al
 ![Delay de los paquetes entregados al node 5 P2C2](./IMGs/DelayXFuente_Node5_P2C2.png){width=850 height=auto}
 
 En esta gráfica podemos ver como el _delay_ de los paquetes que llegan al `nodo[5]` es directamente proporcional a la distancia que recorren los paquetes para llegar al `nodo[5]`. A mayor distancia, mayor delay. Esto sucede porque los paquetes deben pasar por más nodos antes de llegar al `nodo[5]`.
-La ventaja es que nuestro algoritmo trata de aprovecharlo y de esta forma son mas los paquetes que llegan con un menor _delay_ respecto a la **Parte1** porque justamente se elige la ruta más corta.
+La ventaja es que nuestro algoritmo trata de aprovecharlo y de esta forma son más los paquetes que llegan con un menor _delay_ respecto a la **Parte1** porque justamente se elige la ruta más corta.
 
 ---
 
 ## A partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red en el caso 2?
+
 <!--
-En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red.  
+En el caso 2 explore y determine a partir de qué valor de interArrivalTime se puede garantizar un equilibrio o estabilidad en la red.
 -->
 
-Nuestra hipotesis es que para que haya un equilibrio y estabilidad en la red, no se deben generar colas crecientes en los buferes _Generadores_ y _Conectores_. Para esto, una solucion es que el interArrivalTime sea tal que los paquetes se generen cada X tiempo, donde X seria el tiempo suficiente para que todos los paquetes anteriermente generados, sean entregados. De esta forma, la cantidad de paquetes circulando en la red volvera a 0 y el ciclo se repetira continuamente sin crecer.
+Nuestra hipótesis es que para que haya un equilibrio y estabilidad en la red, no se deben generar colas crecientes en los búferes _Generadores_ y _Conectores_. Para esto, una solución es que el interArrivalTime sea tal que los paquetes se generen cada X tiempo, donde X seria el tiempo suficiente para que todos los paquetes anteriormente generados, sean entregados. De esta forma, la cantidad de paquetes circulando en la red volverá a 0 y el ciclo se repetirá continuamente sin crecer.
 
-El tiempo necesario para que todos los paquetes sean entregados es igual al camino mas largo en numero de enlaces entre un origen y destino multiplicado por la velocidad de transferencia a traves de esos enlaces.
+El tiempo necesario para que todos los paquetes sean entregados es igual al camino más largo en numero de enlaces entre un origen y destino multiplicado por la velocidad de transferencia a traves de esos enlaces.
 
-Por lo tanto, creemos que para que haya un equilibrio y estabilidad en la red, se debe respetar lo siguiente: interArrivalTime >= len(camino mas largo) * (packetByteSize / datarate)
+Por lo tanto, creemos que para que haya un equilibrio y estabilidad en la red, se debe respetar lo siguiente: interArrivalTime >= len(camino más largo) \* (packetByteSize / datarate)
 
 Para esto probamos con interArrivalTime = uniform(4, 4 + exponential(1)) consiguiendo el objetivo deseado.
 
-Para comprobarlo, veamos los efectos de la siguiente configuracion en la parte 2:
+Para comprobarlo, veamos los efectos de la siguiente configuración en la parte 2:
 
 - datarate = 1Mbps;
 - Network.node[{0, 1, 2, 3, 4, 6, 7}].app.interArrivalTime = uniform(4, 4 + exponential(1))
 - Network.node[{0, 1, 2, 3, 4, 6, 7}].app.packetByteSize = 125000
 - Network.node[{0, 1, 2, 3, 4, 6, 7}].app.destination = 5
 
-_La utilizacion de los buffers_
+_La utilización de los buffers_
 ![Buffers P2C5](./IMGs/Bufferes_P2C5.png){width=850 height=auto}
 
 _La llegada de los paquetes a destino_
@@ -509,7 +513,7 @@ _El delay con el que llegan_
 ![Delay de los paquetes entregados al node 5 P2C5](./IMGs/DelayXFuente_Node5_P2C5.png){width=850 height=auto}
 
 Como podemos ver, aunque reduciendo la cantidad total de paquetes que llegan al node[5] de 398 en el mejor caso a 302, hemos podido estabilizar la red.
-Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuyo la cantidad de paquetes llegados al node[5].
+Notar que hay un factor aleatorio en el interArrivalTime, por esa razón disminuyo la cantidad de paquetes llegados al node[5].
 
 ## Conclusiones
 
@@ -519,19 +523,19 @@ Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuy
 
 **_Enrutamiento_**
 
-- En la _parte 1_ el algoritmo sin considerar ninguna informacion tan solo enruta en cada node[] por su .lnk[0]
-- En la _parte 2_ los nodos primero envian una serie de paquetes para obtener informacion sobre la red.
-Cada nodo envia un paquete para obtener la longitud de la red (cuenta por cuentos nodos pasa hasta volver al origen), luego otro para obtener la topologia de la misma (array con el orden de los nodos en el orden en que los va visitando).
-Con esta informacion cada nodo elige el camino a destino mas corto entre el del .lnk[0] y .lnk[1] y por alli manda los paquetes.
+- En la _parte 1_ el algoritmo sin considerar ninguna información tan solo enruta en cada node[] por su .lnk[0]
+- En la _parte 2_ los nodos primero envían una serie de paquetes para obtener información sobre la red.
+  Cada nodo envía un paquete para obtener la longitud de la red (cuenta por cuentos nodos pasa hasta volver al origen), luego otro para obtener la topología de la misma (array con el orden de los nodos en el orden en que los va visitando).
+  Con esta información cada nodo elige el camino a destino más corto entre el del .lnk[0] y .lnk[1] y por allí manda los paquetes.
 
-> Obs: El proceso de obtencion de la topologia de la red dura 0.0033 segundos y no carga la red significativamente, por lo que es en verdad una mejora por su efecto positivo como ya veremos.
+> Obs: El proceso de obtención de la topología de la red dura 0.0033 segundos y no carga la red significativamente, por lo que es en verdad una mejora por su efecto positivo como ya veremos.
 
 **_Uso de los lnk[]_**
 
-- En la _parte 1_ el algoritmo es simple, siempre enruta por el .lnk[0]. En consecuencia no se usan los bufers de los .lnk[1].
-- En la _parte 2_ nuestro algoritmo ya no es tan simple, este si realiza el enrutamiento premeditando con mas informacion para decidir por cual lnk[] enviar los paquetes.
+- En la _parte 1_ el algoritmo es simple, siempre enruta por el .lnk[0]. En consecuencia no se usan los buffers de los .lnk[1].
+- En la _parte 2_ nuestro algoritmo ya no es tan simple, este si realiza el enrutamiento premeditando con más información para decidir por cual lnk[] enviar los paquetes.
 
-#### Resultados 
+#### Resultados
 
 <!--
 Comparar gráficos de ambas partes. solo poner los gráficos si hay algo que comparar o recordar.
@@ -547,7 +551,7 @@ mejoran las métricas? ¿Por qué?
 - _Parte 2 Caso 2_: 398
 
 Un mejor algoritmo de enrutamiento en ambos casos aumenta la cantidad de paquetes que llegan a destino.
-Notar que siempre se utilizaron los datos de los primeros 200s de la simulacion.
+Notar que siempre se utilizaron los datos de los primeros 200s de la simulación.
 
 **_Rango de la cantidad de paquetes llegados a destino de cada nodo:_**
 
@@ -557,7 +561,7 @@ Notar que siempre se utilizaron los datos de los primeros 200s de la simulacion.
 - _Parte 2 Caso 1_: (193 - 186) / 379 = 2%
 - _Parte 2 Caso 2_: (93 - 19) / 398 = 20%
 
-Con un mejor algoritmo de enrutamiento hay una distribucion de los paquetes que llegan a destino de cada origen mas equitativa.
+Con un mejor algoritmo de enrutamiento hay una distribución de los paquetes que llegan a destino de cada origen más equitativa.
 
 **_Maxima distancia que recorren los paquetes_**
 
@@ -568,7 +572,7 @@ Con un mejor algoritmo de enrutamiento hay una distribucion de los paquetes que 
 
 Con un mejor algoritmo de enrutamiento la distancia maxima que recorren los paquetes disminuye. (O el promedio al menos en otro tipo de algoritmos)
 
-**_Delay maximo (ultimo a los 200s) con el que se entregan los paquetes a destino_**
+**_Delay máximo (ultimo a los 200s) con el que se entregan los paquetes a destino_**
 
 - _Parte 1 Caso 1_: 105
 - _Parte 1 Caso 2_: 184
@@ -578,7 +582,7 @@ Con un mejor algoritmo de enrutamiento la distancia maxima que recorren los paqu
 Con un mejor algoritmo de enrutamiento el delay con el que llegan los paquetes a destino disminuye.
 Notar que en el caso 1 el delay disminuyo mucho, esto se debe a que el algoritmo de enrutamiento hizo que en la parte 2 no haya nodos _Conectores_ que a la vez son _Generadores_ en las rutas, cosa que el algoritmo de la parte 1 no hizo.
 
-**_Utilizacion de los bufferes y consecuente carga en la red_**
+**_Utilización de los buffers y consecuente carga en la red_**
 
 Como ya hemos visto, en nuestros casos, lo que produce una carga importante en la red es la existencia de nodos que son a la vez _Conectores_ y _Generadores_.
 
@@ -591,7 +595,7 @@ _Cantidad de nodos que son a la vez Conectores y Generadores_:
 
 La carga total de la red aumenta proporcionalmente al aumento de la cantidad de nodos que son a la vez _Conectores_ y _Generadores_.
 
-Por ejemplo, el aumento mas significativo que se dio fue en el caso 1. Si nos fijamos en las estadisticas anteriores, veremos que los datos de la parte 1 son peores que los de la parte 2, mucho mas que si comparacemos fijandonos en el caso 2.
+Por ejemplo, el aumento más significativo que se dio fue en el caso 1. Si nos fijamos en las estadísticas anteriores, veremos que los datos de la parte 1 son peores que los de la parte 2, mucho más que si compararemos fijándonos en el caso 2.
 
 Aumento entre casos de la parte 2 a la 1:
 
@@ -603,19 +607,19 @@ El mejor ejemplo esta en el delay del caso 1, ya que el aumento del mismo desde 
 ### Discusiones
 
 <!--
-cualquier cosa que no entre en la comparación de resultados va aca, ej: posibles mejoras, obs,conclusiones, ... 
+cualquier cosa que no entre en la comparación de resultados va aca, ej: posibles mejoras, obs,conclusiones, ...
 -->
 
-Algo que no hace nuestro algoritmo es el control de congestion. Si dejamos correr el tiempo suficiente la simulacion, con bufferes finitos estos se acabaran saturando.
-Como hemos visto, los nodos _Conectores_ y _Generadores_, recibiendo paquetes contantemente a una velocidad mayor en promedio que la que los pueden enviar, tendran un buffer cada vez mas cargado. Por lo tanto, con bufferes finitos estos se acabarian saturando.
+Algo que no hace nuestro algoritmo es el control de congestion. Si dejamos correr el tiempo suficiente la simulación, con buffers finitos estos se acabaran saturando.
+Como hemos visto, los nodos _Conectores_ y _Generadores_, recibiendo paquetes constantemente a una velocidad mayor en promedio que la que los pueden enviar, tendrán un buffer cada vez más cargado. Por lo tanto, con búferes finitos estos se acabarían saturando.
 
-Luego, nuestro algoritmo no maximisa la eficiencia del enrutamiento. Por ejemplo, sin cambiar la topologia se podria hacer que los nodos distribuyan la carga entre rutas con distancias similares al destino y la eficiencia seria mayor.
+Luego, nuestro algoritmo no maximiza la eficiencia del enrutamiento. Por ejemplo, sin cambiar la topología se podría hacer que los nodos distribuyan la carga entre rutas con distancias similares al destino y la eficiencia seria mayor.
 
-Por otro lado, no nos adaptamos a los cambios de la topologia ni tenemos en cuenta a los retardos de cada nodo a destino. Ya que los paquetes de obtencion de informacion solo obtienen la distancia a destino y no la velocidad a el, y solo se envian una vez, por lo que no se actualizan con el tiempo.
+Por otro lado, no nos adaptamos a los cambios de la topología ni tenemos en cuenta a los retardos de cada nodo a destino. Ya que los paquetes de obtención de información solo obtienen la distancia a destino y no la velocidad a el, y solo se envían una vez, por lo que no se actualizan con el tiempo.
 
-Ademas, nuestro algoritmo esta pensado para una topologia circular. Un cambio de la topologia, por ejemplo el solo hecho de eliminar un enlace, ya inutiliza nuestro sistema. El algoritmo solo sirve si es circular la topologia.
+Ademas, nuestro algoritmo esta pensado para una topología circular. Un cambio de la topología, por ejemplo el solo hecho de eliminar un enlace, ya inutiliza nuestro sistema. El algoritmo solo sirve si es circular la topología.
 
-Aun asi, un nodo no puede recibir mas paquetes que los que le pueden llegar por sus dos enlaces. En nuestros casos, el destino node[5] en la parte 2 recibe todos los paquetes que puede recibir.
+Aun asi, un nodo no puede recibir más paquetes que los que le pueden llegar por sus dos enlaces. En nuestros casos, el destino node[5] en la parte 2 recibe todos los paquetes que puede recibir.
 
 ---
 
@@ -628,4 +632,4 @@ Si agregamos imágenes de Tanembaun para explicar algo, también se debe referen
 -->
 
 - Andrew S. Tanenbaum, David J. Wetherall, Redes de Computadoras (5ta edición 2011), Pearson.
-- Omnet++ Simulation Manual, (OMNeT++ version 6.0.3, 2020).
+- Omnet++ Simulation Manual, (OMNeT++ versión 6.0.3, 2020).
