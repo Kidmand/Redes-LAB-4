@@ -513,22 +513,92 @@ Notar que hay un factor aleatorio en el interArrivalTime, por esa razon disminuy
 
 ## Conclusiones
 
-### Comparación de resultados
+### Comparación
 
-<!-- TODO:
+#### Algoritmo
+
+**_Enrutamiento_**
+
+- En la _parte 1_ el algoritmo sin considerar ninguna informacion tan solo enruta en cada node[] por su .lnk[0]
+- En la _parte 2_ los nodos primero envian una serie de paquetes para obtener informacion sobre la red.
+Cada nodo envia un paquete para obtener la longitud de la red (cuenta por cuentos nodos pasa hasta volver al origen), luego otro para obtener la topologia de la misma (array con el orden de los nodos en el orden en que los va visitando).
+Con esta informacion cada nodo elige el camino a destino mas corto entre el del .lnk[0] y .lnk[1] y por alli manda los paquetes.
+
+> Obs: El proceso de obtencion de la topologia de la red dura 0.0033 segundos y no carga la red significativamente, por lo que es en verdad una mejora por su efecto positivo como ya veremos.
+
+**_Uso de los lnk[]_**
+
+- En la _parte 1_ el algoritmo es simple, siempre enruta por el .lnk[0]. En consecuencia no se usan los bufers de los .lnk[1].
+- En la _parte 2_ nuestro algoritmo ya no es tan simple, este si realiza el enrutamiento premeditando con mas informacion para decidir por cual lnk[] enviar los paquetes.
+
+#### Resultados 
+
+<!--
 Comparar gráficos de ambas partes. solo poner los gráficos si hay algo que comparar o recordar.
 Evalúe y compare su estrategia con los casos 1 y 2 de la tarea de análisis . ¿Cuánto4
 mejoran las métricas? ¿Por qué?
 -->
 
-#### Algoritmo
+**_Cantidad de paquetes llegados a destino:_**
 
-_Uso de los lnk[]_
+- _Parte 1 Caso 1_: 196
+- _Parte 1 Caso 2_: 199
+- _Parte 2 Caso 1_: 379
+- _Parte 2 Caso 2_: 398
 
-- En la _parte 1_ el algoritmo es simple, siempre enruta por el .lnk[0]. En consecuencia no se usan los bufers de los .lnk[1].
-- En la _parte 2_ nuestro algoritmo ya no es tan simple, este si realiza el enrutamiento premeditando con mas informacion para decidir por cual lnk[] enviar los paquetes.
+Un mejor algoritmo de enrutamiento en ambos casos aumenta la cantidad de paquetes que llegan a destino.
+Notar que siempre se utilizaron los datos de los primeros 200s de la simulacion.
 
-Obtencion 
+**_Rango de la cantidad de paquetes llegados a destino de cada nodo:_**
+
+- _Parte i Caso j_: (max - min) / total = (diferencia con respecto al total)%
+- _Parte 1 Caso 1_: (106 - 90) / 196 = 8%
+- _Parte 1 Caso 2_: (93 - 2) / 199 = 46%
+- _Parte 2 Caso 1_: (193 - 186) / 379 = 2%
+- _Parte 2 Caso 2_: (93 - 19) / 398 = 20%
+
+Con un mejor algoritmo de enrutamiento hay una distribucion de los paquetes que llegan a destino desde cada origen mas equitativa.
+
+**_Maxima distancia que recorren los paquetes_**
+
+- _Parte 1 Caso 1_: 5
+- _Parte 1 Caso 2_: 7
+- _Parte 2 Caso 1_: 3
+- _Parte 2 Caso 2_: 4
+
+Con un mejor algoritmo de enrutamiento la distancia maxima que recorren los paquetes disminuye. (O el promedio al menos en otro tipo de algoritmos)
+
+**_Delay maximo (ultimo a los 200s) con el que se entregan los paquetes a destino_**
+
+- _Parte 1 Caso 1_: 105
+- _Parte 1 Caso 2_: 184
+- _Parte 2 Caso 1_: 12
+- _Parte 2 Caso 2_: 179
+
+Con un mejor algoritmo de enrutamiento el delay con el que llegan los paquetes a destino disminuye.
+Notar que en el caso 1 el delay disminuyo mucho, esto se debe a que el algoritmo de enrutamiento hizo que en la parte 2 no haya nodos _Conectores_ que a la vez son _Generadores_ en las rutas, cosa que el algoritmo de la parte 1 no hizo.
+
+**_Utilizacion de los bufferes y consecuente carga en la red_**
+
+Como ya hemos visto, en nuestros casos, lo que produce una carga importante en la red es la existencia de nodos que son a la vez _Conectores_ y _Generadores_.
+
+_Cantidad de nodos que son a la vez Conectores y Generadores_:
+
+- _Parte 1 Caso 1_: 1
+- _Parte 1 Caso 2_: 6
+- _Parte 2 Caso 1_: 0
+- _Parte 2 Caso 2_: 5
+
+La carga total de la red aumenta en la direccion al aumento de la cantidad de nodos que son a la vez _Conectores_ y _Generadores_.
+
+Por ejemplo, el aumento mas significativo que se dio fue en el caso 1. Si nos fijamos en las estadisticas anteriores, veremos que los datos de la parte 1 son peores que los de la parte 2, mucho mas que si comparacemos fijandonos en el caso 2.
+
+Aumento entre casos de la parte 2 a la 1:
+
+- _Caso 1_: De la parte 2 a la 1 aumento de 0 a 1
+- _Caso 2_: De la parte 2 a la 1 aumento un 20%
+
+El mejor ejemplo esta en el delay del caso 1, el aumento del mismo desde la parte 2 a la parte 1 fue de un 775%
 
 ### Discusiones
 
