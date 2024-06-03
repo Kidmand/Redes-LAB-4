@@ -298,7 +298,6 @@ int Net::routePacket(Packet *pkt)
     {
         if (networkArray[i] == dest)
         {
-
             found = true;
             break;
         }
