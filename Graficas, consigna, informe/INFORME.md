@@ -557,7 +557,7 @@ Notar que siempre se utilizaron los datos de los primeros 200s de la simulacion.
 - _Parte 2 Caso 1_: (193 - 186) / 379 = 2%
 - _Parte 2 Caso 2_: (93 - 19) / 398 = 20%
 
-Con un mejor algoritmo de enrutamiento hay una distribucion de los paquetes que llegan a destino desde cada origen mas equitativa.
+Con un mejor algoritmo de enrutamiento hay una distribucion de los paquetes que llegan a destino de cada origen mas equitativa.
 
 **_Maxima distancia que recorren los paquetes_**
 
@@ -589,7 +589,7 @@ _Cantidad de nodos que son a la vez Conectores y Generadores_:
 - _Parte 2 Caso 1_: 0
 - _Parte 2 Caso 2_: 5
 
-La carga total de la red aumenta en la direccion al aumento de la cantidad de nodos que son a la vez _Conectores_ y _Generadores_.
+La carga total de la red aumenta proporcionalmente al aumento de la cantidad de nodos que son a la vez _Conectores_ y _Generadores_.
 
 Por ejemplo, el aumento mas significativo que se dio fue en el caso 1. Si nos fijamos en las estadisticas anteriores, veremos que los datos de la parte 1 son peores que los de la parte 2, mucho mas que si comparacemos fijandonos en el caso 2.
 
@@ -598,13 +598,24 @@ Aumento entre casos de la parte 2 a la 1:
 - _Caso 1_: De la parte 2 a la 1 aumento de 0 a 1
 - _Caso 2_: De la parte 2 a la 1 aumento un 20%
 
-El mejor ejemplo esta en el delay del caso 1, el aumento del mismo desde la parte 2 a la parte 1 fue de un 775%
+El mejor ejemplo esta en el delay del caso 1, ya que el aumento del mismo desde la parte 2 a la parte 1 fue de un 775%
 
 ### Discusiones
 
-<!-- TODO:
+<!--
 cualquier cosa que no entre en la comparación de resultados va aca, ej: posibles mejoras, obs,conclusiones, ... 
 -->
+
+Algo que no hace nuestro algoritmo es el control de congestion. Si dejamos correr el tiempo suficiente la simulacion, con bufferes finitos estos se acabaran saturando.
+Como hemos visto, los nodos _Conectores_ y _Generadores_, recibiendo paquetes contantemente a una velocidad mayor en promedio que la que los pueden enviar, tendran un buffer cada vez mas cargado. Por lo tanto, con bufferes finitos estos se acabarian saturando.
+
+Luego, nuestro algoritmo no maximisa la eficiencia del enrutamiento. Por ejemplo, sin cambiar la topologia se podria hacer que los nodos distribuyan la carga entre rutas con distancias similares al destino y la eficiencia seria mayor.
+
+Por otro lado, no nos adaptamos a los cambios de la topologia ni tenemos en cuenta a los retardos de cada nodo a destino. Ya que los paquetes de obtencion de informacion solo obtienen la distancia a destino y no la velocidad a el, y solo se envian una vez, por lo que no se actualizan con el tiempo.
+
+Ademas, nuestro algoritmo esta pensado para una topologia circular. Un cambio de la topologia, por ejemplo el solo hecho de eliminar un enlace, ya inutiliza nuestro sistema. El algoritmo solo sirve si es circular la topologia.
+
+Aun asi, un nodo no puede recibir mas paquetes que los que le pueden llegar por sus dos enlaces. En nuestros casos, el destino node[5] en la parte 2 recibe todos los paquetes que puede recibir.
 
 ---
 
