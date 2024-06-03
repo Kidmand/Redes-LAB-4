@@ -1,4 +1,4 @@
-# Informe
+# Análisis del enrutamiento en redes utilizando simulación de eventos discretos y un protocolo diseñado por nosotros
 
 ## Presentación
 
@@ -520,6 +520,15 @@ Comparar gráficos de ambas partes. solo poner los gráficos si hay algo que com
 Evalúe y compare su estrategia con los casos 1 y 2 de la tarea de análisis . ¿Cuánto4
 mejoran las métricas? ¿Por qué?
 -->
+
+#### Algoritmo
+
+_Uso de los lnk[]_
+
+- En la _parte 1_ el algoritmo es simple, siempre enruta por el .lnk[0]. En consecuencia no se usan los bufers de los .lnk[1].
+- En la _parte 2_ nuestro algoritmo ya no es tan simple, este si realiza el enrutamiento premeditando con mas informacion para decidir por cual lnk[] enviar los paquetes.
+
+Obtencion 
 
 ### Discusiones
 
